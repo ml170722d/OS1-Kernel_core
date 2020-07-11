@@ -5,9 +5,6 @@
  *      Author: OS1
  */
 
-
-
-
 //  v2_zad4.cpp
 //  prevodjenje iz komandne linije: bcc -mh -Ic:\bc31\include -Lc:\bc31\lib v2_zad4.cpp
 
@@ -16,10 +13,9 @@
 //////////////////////////
 
 //pretpostavljeni memorijski model: huge
-#include <iostream.h>
-#include <dos.h>
 #include "SCHEDULE.H"
 #include "PCB.H"
+#include "linkLst.h"
 
 #include "consts.h"
 
@@ -203,14 +199,19 @@ const int M = 20;
 void f(){
 	for (int i =0; i < M; ++i) {
 			Lock::lock();
-			cout<<"funkcija_"<<tid<<" "<<i<<endl;
+			//cout<<"funkcija_"<<tid<<" "<<i<<endl;
 			Lock::unlock();
 			if(CS_req)
 				dispatch();
 			for (int k = 0; k<10000; ++k)
 				for (int j = 0; j <30000; ++j);
 		}
-		exitThread();
+
+	Lock::lock();
+	cout<<"fin"<<endl;
+	Lock::unlock();
+
+	exitThread();
 }
 
 
@@ -233,14 +234,25 @@ void doSomething(){
 
 	unlock_I;
 
-	for (int i = 0; i < 15; ++i) {
+	for (int i = 0; i < M; ++i) {
 		lock_I;
 		cout<<"main "<<i<<endl;
 		unlock_I;
 
 		for (int j = 0; j< 10000; ++j)
 			for (int k = 0; k < 30000; ++k);
+
+		if (i%5 == 0){
+			Lock::lock();
+			cout<<"----------------------"<<endl;
+			cout<<"i = "<<i<<endl;
+			cout<<"----------------------"<<endl;
+			tests_for_linkedList();
+			cout<<"----------------------"<<endl;
+			Lock::unlock();
+		}
 	}
+
 	cout<<"Srecan kraj!"<<endl;
 }
 
