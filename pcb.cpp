@@ -6,12 +6,13 @@
  */
 
 #include "pcb.h"
+#include "consts.h"
 
 volatile PCB* PCB::runnig=0;
 
 int PCB::ID=0;
 
-PCB::PCB(): state(PCB::NEW), quantum(2), id(ID++), stack(0), sp(0), ss(0), bp(0){
+PCB::PCB(): state(PCB::NEW), quantum(DEFAILT_TIME_SLICE), id(ID++), stack(0), sp(0), ss(0), bp(0){
 }
 
 PCB::PCB(unsigned stackSize, int timeSlice, void (*body)()): state(PCB::NEW), quantum(timeSlice), id(ID++), sp(0), ss(0), bp(0){

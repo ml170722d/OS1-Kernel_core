@@ -8,9 +8,6 @@
 #ifndef PCB_H_
 #define PCB_H_
 
-#include <iostream.h>
-#include <dos.h>
-
 class PCB{
 
 public:
