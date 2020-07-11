@@ -14,28 +14,30 @@
 
 //pretpostavljeni memorijski model: huge
 #include "SCHEDULE.H"
-#include "PCB.H"
+#include "pcb.h"
 #include "linkLst.h"
+#include "kernel.h"
 
 #include "consts.h"
 
  //pok na prekidnu rutinu
-pInterrupt oldTimer;
+//pInterrupt oldTimer;
 
-unsigned stara=0x8;
-unsigned nova=0x60;
+//unsigned stara=0x8;
+//unsigned nova=0x60;
 
 PCB** p;
 //volatile PCB* running;
-volatile int nextThread = 2;
+//volatile int nextThread = 2;
 
 // stara prekidna rutina
-unsigned oldTimerOFF, oldTimerSEG;
+//unsigned oldTimerOFF, oldTimerSEG;
 
 // deklaracija nove prekidne rutine
-void interrupt timer(...);
+//void interrupt timer(...);
 
 // postavlja novu prekidnu rutinu
+/*
 void inic(){
 #ifndef BCC_BLOCK_IGNORE
 	asm cli;
@@ -48,7 +50,8 @@ void inic(){
 	asm sti;
 #endif
 }
-
+*/
+/*
 // vraca staru prekidnu rutinu
 void restore(){
 #ifndef BCC_BLOCK_IGNORE
@@ -57,12 +60,14 @@ void restore(){
 	asm sti;
 #endif
 }
-
+*/
 //pomocne promenljive za prekid tajmera
+/*
 unsigned tsp, tss, tbp;
 unsigned tid;
+*/
 
-
+/*
 class Lock{
 public:
 	static void lock();
@@ -112,15 +117,14 @@ void Lock::unlock(){
 boolean Lock::isLocked(){
 	return lockCond;
 }
+*/
+//volatile boolean lockFlag = true;
 
-volatile boolean lockFlag = true;
-
-volatile int csCnt = 20;
-volatile boolean CS_req = false;
-
+//volatile int csCnt = 20;
+//volatile boolean CS_req = false;
+/*
 // nova prekidna rutina tajmera
 void interrupt timer(...){
-	int dummy=0;
 	if (!CS_req) csCnt--;
 	if (csCnt == 0 || CS_req) {
 		if(!Lock::isLocked()){
@@ -180,7 +184,8 @@ void interrupt timer(...){
 
 	//CS_req = 0;
 }
-
+*/
+/*
 // sinhrona promena konteksta
 void dispatch(){
 	lock_I
@@ -188,6 +193,7 @@ void dispatch(){
 	timer();
 	unlock_I
 }
+*/
 
 void exitThread(){
 	PCB::runnig->state = PCB::FINISHED;
@@ -198,18 +204,18 @@ const int M = 20;
 
 void f(){
 	for (int i =0; i < M; ++i) {
-			Lock::lock();
+			Kernel::Lock::CS_lock();
 			//cout<<"funkcija_"<<tid<<" "<<i<<endl;
-			Lock::unlock();
-			if(CS_req)
+			Kernel::Lock::CS_unlock();
+			if(Kernel::CS_req)
 				dispatch();
 			for (int k = 0; k<10000; ++k)
 				for (int j = 0; j <30000; ++j);
 		}
 
-	Lock::lock();
+	Kernel::Lock::CS_lock();
 	cout<<"fin"<<endl;
-	Lock::unlock();
+	Kernel::Lock::CS_unlock();
 
 	exitThread();
 }
@@ -243,13 +249,13 @@ void doSomething(){
 			for (int k = 0; k < 30000; ++k);
 
 		if (i%5 == 0){
-			Lock::lock();
+			Kernel::Lock::CS_lock();
 			cout<<"----------------------"<<endl;
 			cout<<"i = "<<i<<endl;
 			cout<<"----------------------"<<endl;
 			tests_for_linkedList();
 			cout<<"----------------------"<<endl;
-			Lock::unlock();
+			Kernel::Lock::CS_unlock();
 		}
 	}
 
@@ -258,11 +264,11 @@ void doSomething(){
 
 int main(){
 
-	inic();
+	Kernel::init();
 
 	doSomething();
 
-	restore();
+	Kernel::restore();
 
 	return 0;
 
