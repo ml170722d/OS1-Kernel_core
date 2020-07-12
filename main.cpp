@@ -23,7 +23,7 @@
 PCB** p;
 
 void exitThread(){
-	Kernel::running->state = PCB::FINISHED;
+	Kernel::running->state = PCB::TERMINATED;
 	dispatch();
 }
 
@@ -60,7 +60,7 @@ void doSomething(){
 	p = new PCB*[N];
 
 	for (int br = 0; br < N; ++br) {
-		p[br] = new PCB(1024,(br%2)?15:10, NULL);  //(br%2)?40:20 da bi se niti razlikovale po vremenu izvrsavanja
+		p[br] = new PCB(1024,(br%2)?30:20, NULL);  //(br%2)?40:20 da bi se niti razlikovale po vremenu izvrsavanja
 		Scheduler::put(p[br]);
 	}
 

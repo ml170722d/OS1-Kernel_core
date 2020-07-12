@@ -8,19 +8,20 @@
 #ifndef PCB_H_
 #define PCB_H_
 
+#include "consts.h"
+
+class Thread;
+
 class PCB{
 
 public:
-
-	static volatile PCB* runnig;
-
-	enum State { READY, RUNNING, BLOCKED, FINISHED, NEW };
+	enum State { READY, RUNNING, BLOCKED, TERMINATED, NEW };
 
 	PCB();
-	PCB(unsigned stackSize, int timeSlice, void (*body)());
+	PCB(StackSize stackSize, Time timeSlice, Thread* myThread);
 
 
-private:
+protected:
 
 	friend void interrupt timer(...);
 	friend void dispatch();
@@ -29,18 +30,22 @@ private:
 	//tmp friend
 	friend void doSomething();
 
+private:
+
 	unsigned bp;
 	unsigned sp;
 	unsigned ss;
 	State state;
 	unsigned* stack;
-	int quantum;
+	StackSize size;
+	Time timeSlice;
 	int id;
 
 	static int ID;
 
 	static void wrapper();
 
+	//tmp variable
 	static volatile int fin;
 
 };

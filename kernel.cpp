@@ -39,6 +39,8 @@ void interrupt timer(...) {
 	if (!Kernel::CS_req) Kernel::csCnt--;
 		if ((Kernel::csCnt == 0) || (Kernel::CS_req)) {
 			if(!Kernel::Lock::isLocked()){
+
+				cout<<"context switch ------------"<<endl;
 				Kernel::CS_req=0;
 				asm {
 					// cuva sp
@@ -54,24 +56,24 @@ void interrupt timer(...) {
 				// scheduler
 				//Kernel::running = getNextPCBToExecute();
 
-				cout<<"old running id: "<<Kernel::running->id<<endl;
-				if(Kernel::running->state!=PCB::FINISHED) Scheduler::put((PCB*)Kernel::running);
+				//cout<<"old running id: "<<Kernel::running->id<<endl;
+				if(Kernel::running->state!=PCB::TERMINATED) Scheduler::put((PCB*)Kernel::running);
 				Kernel::running=Scheduler::get();
 
-				if(Kernel::running->quantum==0){
+				if(Kernel::running->timeSlice==0){
 					Scheduler::put((PCB*)Kernel::running);
 					cout<<"quantum=0, id: "<<Kernel::running->id<<endl;
 					Kernel::running=Scheduler::get();
 				}
 
-				cout<<"new running id: "<<Kernel::running->id<<endl;
+				//cout<<"new running id: "<<Kernel::running->id<<endl;
 
 				tsp = Kernel::running->sp;
 				tss = Kernel::running->ss;
 				tbp = Kernel::running->bp;
 
 				tid = Kernel::running->id;
-				Kernel::csCnt = Kernel::running->quantum;
+				Kernel::csCnt = Kernel::running->timeSlice;
 
 
 				asm {
