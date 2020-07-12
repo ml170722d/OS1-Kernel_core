@@ -22,53 +22,25 @@
 
 PCB** p;
 
-void exitThread(){
-	Kernel::running->state = PCB::TERMINATED;
-	dispatch();
-}
-
-const int M = 20;
-
-/*
-void f(){
-	for (int i =0; i < M; ++i) {
-			Kernel::Lock::CS_lock();
-			//cout<<"funkcija_"<<tid<<" "<<i<<endl;
-			Kernel::Lock::CS_unlock();
-			if(Kernel::CS_req)
-				dispatch();
-			for (int k = 0; k<10000; ++k)
-				for (int j = 0; j <30000; ++j);
-		}
-
-	Kernel::Lock::CS_lock();
-	cout<<"----------fin: "<<++fin<<endl;
-	Kernel::Lock::CS_unlock();
-
-	exitThread();
-}
-*/
-
 const int N = 10;
 
 void doSomething(){
 	lock_I;
 
-	//testiram sa 10 niti
-	//p[0] = new PCB();
-	//PCB::runnig = p[0];
 	p = new PCB*[N];
 
-	for (int br = 0; br < N; ++br) {
-		p[br] = new PCB(1024,(br%2)?30:20, NULL);  //(br%2)?40:20 da bi se niti razlikovale po vremenu izvrsavanja
-		Scheduler::put(p[br]);
+	int i;
+
+	for (i = 0; i < N; ++i) {
+		p[i] = new PCB(1024,(i%2)?30:20, NULL);  //(br%2)?40:20 da bi se niti razlikovale po vremenu izvrsavanja
+		p[i]->start();
 	}
 
 
 
 	unlock_I;
 
-	for (int i = 0; i < M; ++i) {
+	/*for (i = 0; i < M; ++i) {
 		lock_I;
 		cout<<"main "<<i<<endl;
 		unlock_I;
@@ -85,7 +57,21 @@ void doSomething(){
 			cout<<"----------------------"<<endl;
 			Kernel::Lock::CS_unlock();
 		}
+	}*/
+
+	Kernel::Lock::CS_lock();
+	for (i = 0; i < N; i++){
+		cout << p[i]<<" ";
 	}
+	cout<<endl;
+	Kernel::all_pcb.printList();
+	Kernel::Lock::CS_unlock();
+
+	for (i = 0; i < N; i++){
+		delete p[i];
+	}
+	cout<<"all pcb terminated"<<endl;
+	delete p;
 
 	cout<<"fin on main end = "<<PCB::fin<<endl;
 	cout<<"Srecan kraj!"<<endl;

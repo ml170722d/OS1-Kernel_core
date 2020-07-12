@@ -35,12 +35,12 @@ unsigned tid;
  * new timer routine definition
  */
 void interrupt timer(...) {
-	cout<<"*"<<endl;
+	//cout<<"*"<<endl;
 	if (!Kernel::CS_req) Kernel::csCnt--;
 		if ((Kernel::csCnt == 0) || (Kernel::CS_req)) {
 			if(!Kernel::Lock::isLocked()){
 
-				cout<<"context switch ------------"<<endl;
+				//cout<<"context switch ------------"<<endl;
 				Kernel::CS_req=0;
 				asm {
 					// cuva sp
@@ -57,10 +57,13 @@ void interrupt timer(...) {
 				//Kernel::running = getNextPCBToExecute();
 
 				//cout<<"old running id: "<<Kernel::running->id<<endl;
-				if(Kernel::running->state!=PCB::TERMINATED) Scheduler::put((PCB*)Kernel::running);
-				Kernel::running=Scheduler::get();
+				if((Kernel::running->state != PCB::TERMINATED) && (Kernel::running->state != PCB::BLOCKED)){
+					//cout<<"put"<<endl;
+					Scheduler::put((PCB*)Kernel::running);
+				}
+				Kernel::running = Scheduler::get();
 
-				if(Kernel::running->timeSlice==0){
+				if(Kernel::running->timeSlice == 0){
 					Scheduler::put((PCB*)Kernel::running);
 					cout<<"quantum=0, id: "<<Kernel::running->id<<endl;
 					Kernel::running=Scheduler::get();
@@ -194,6 +197,7 @@ boolean Kernel::Lock::isLocked(){
 void dispatch(){
 	Kernel::requestCS(); //makes sure it is not interrupted for itself
 	lock_I;
+	//cout<<"disp"<<endl;
 	timer();
 	unlock_I
 }

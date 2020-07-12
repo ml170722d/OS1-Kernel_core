@@ -73,8 +73,9 @@ protected:
 	friend void interrupt timer(...);
 
 	//TODO: delete temp friend functions and classes
-	friend void f();
-	friend void exitThread();
+	friend void f(); //does not exist
+	friend void exitThread(); //does not exist
+	friend void doSomething();
 
 private:
 
