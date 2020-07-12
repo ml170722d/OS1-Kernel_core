@@ -13,7 +13,6 @@
 #include "linkLst.h"
 
 LinkedList<PCB*> Kernel::all_pcb;
-//volatile Kernel::Lock Kernel::CSLock;
 PCB* Kernel::main_pcb = NULL;
 volatile boolean Kernel::CS_req = false;
 volatile int Kernel::csCnt = 20;//DEFAULT_TIME_SLICE;
@@ -36,6 +35,7 @@ unsigned tid;
  * new timer routine definition
  */
 void interrupt timer(...) {
+	cout<<"*"<<endl;
 	if (!Kernel::CS_req) Kernel::csCnt--;
 		if ((Kernel::csCnt == 0) || (Kernel::CS_req)) {
 			if(!Kernel::Lock::isLocked()){
@@ -47,31 +47,31 @@ void interrupt timer(...) {
 					mov tbp, bp
 				}
 
-				PCB::runnig->sp = tsp;
-				PCB::runnig->ss=tss;
-				PCB::runnig->bp=tbp;
+				Kernel::running->sp = tsp;
+				Kernel::running->ss=tss;
+				Kernel::running->bp=tbp;
 
 				// scheduler
-				//PCB::runnig = getNextPCBToExecute();
+				//Kernel::running = getNextPCBToExecute();
 
-				cout<<"old running id: "<<PCB::runnig->id<<endl;
-				if(PCB::runnig->state!=PCB::FINISHED) Scheduler::put((PCB*)PCB::runnig);
-				PCB::runnig=Scheduler::get();
+				cout<<"old running id: "<<Kernel::running->id<<endl;
+				if(Kernel::running->state!=PCB::FINISHED) Scheduler::put((PCB*)Kernel::running);
+				Kernel::running=Scheduler::get();
 
-				if(PCB::runnig->quantum==0){
-					Scheduler::put((PCB*)PCB::runnig);
-					cout<<"quantum=0, id: "<<PCB::runnig->id<<endl;
-					PCB::runnig=Scheduler::get();
+				if(Kernel::running->quantum==0){
+					Scheduler::put((PCB*)Kernel::running);
+					cout<<"quantum=0, id: "<<Kernel::running->id<<endl;
+					Kernel::running=Scheduler::get();
 				}
 
-				cout<<"new running id: "<<PCB::runnig->id<<endl;
+				cout<<"new running id: "<<Kernel::running->id<<endl;
 
-				tsp = PCB::runnig->sp;
-				tss = PCB::runnig->ss;
-				tbp = PCB::runnig->bp;
+				tsp = Kernel::running->sp;
+				tss = Kernel::running->ss;
+				tbp = Kernel::running->bp;
 
-				tid = PCB::runnig->id;
-				Kernel::csCnt = PCB::runnig->quantum;
+				tid = Kernel::running->id;
+				Kernel::csCnt = Kernel::running->quantum;
 
 
 				asm {
@@ -95,15 +95,21 @@ void interrupt timer(...) {
 }
 
 void Kernel::allocateResources() {
-	//TODO: implement
+	lock_I;
+	Kernel::main_pcb = new PCB();
+	unlock_I;
 }
 
 void Kernel::freeResources() {
-	//TODO: implement
+	lock_I;
+	delete Kernel::main_pcb;
+	unlock_I;
 }
 
 void Kernel::init() {
+	Kernel::allocateResources();
 	lock_I;
+	Kernel::running = Kernel::main_pcb;
 #ifndef BCC_BLOCK_IGNORE
 	//cuvam staru prekidnu rutinu
 	oldTimer=getvect(0x8);
@@ -121,6 +127,7 @@ void Kernel::restore() {
 	setvect(0x8,oldTimer);
 #endif
 	unlock_I;
+	Kernel::freeResources();
 }
 
 
@@ -145,9 +152,9 @@ PCB* Kernel::Lock::owner = null;
 void Kernel::Lock::CS_lock(){
 	lock_I;
 	if (owner == null){
-		owner = (PCB*) PCB::runnig;
+		owner = (PCB*) Kernel::running;
 	}
-	if (owner != PCB::runnig){
+	if (owner != Kernel::running){
 		unlock_I;
 		return;
 	}
@@ -161,7 +168,7 @@ void Kernel::Lock::CS_lock(){
 
 void Kernel::Lock::CS_unlock(){
 	lock_I;
-	if ((owner == null) || (owner != PCB::runnig)){
+	if ((owner == null) || (owner != Kernel::running)){
 		unlock_I;
 		return;
 	}
@@ -169,6 +176,7 @@ void Kernel::Lock::CS_unlock(){
 	lockCnt--;
 	if (lockCnt == 0){
 		lockCond = false;
+		owner = null;
 	}
 	unlock_I;
 }

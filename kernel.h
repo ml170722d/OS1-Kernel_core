@@ -52,11 +52,6 @@ public:
 	static PCB* getRunning();
 
 	/*
-	 * context switch lock
-	 */
-	static volatile Lock CSLock;
-
-	/*
 	 * request for context switch
 	 */
 	static void requestCS();
@@ -79,6 +74,7 @@ protected:
 
 	//TODO: delete temp friend functions and classes
 	friend void f();
+	friend void exitThread();
 
 private:
 
