@@ -29,6 +29,7 @@ const ptr null = 0;
 
 #define lock_I asm cli
 #define unlock_I asm sti
+#define NULL 0
 
 //#define null 0
 
