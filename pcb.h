@@ -9,6 +9,7 @@
 #define PCB_H_
 
 #include "consts.h"
+#include "linkLst.h"
 
 class Thread;
 
@@ -18,7 +19,15 @@ public:
 	enum State { READY, RUNNING, BLOCKED, TERMINATED, NEW };
 
 	PCB();
-	PCB(StackSize stackSize, Time timeSlice, Thread* myThread);
+	PCB(StackSize stackSize, Time timeSlice, Thread* myThread = NULL);
+	virtual ~PCB();
+
+	void start();
+	void waitToComplete();
+
+	_ID getId();
+	static _ID getRunningId();
+	static Thread* getThreadById(_ID id);
 
 
 protected:
@@ -35,13 +44,18 @@ private:
 	unsigned bp;
 	unsigned sp;
 	unsigned ss;
+
 	State state;
+	_ID id;
+
 	unsigned* stack;
 	StackSize size;
 	Time timeSlice;
-	int id;
 
-	static int ID;
+	Thread* myThread;
+	LinkedList<PCB*> waitingQueue;
+
+	static _ID ID;
 
 	static void wrapper();
 
