@@ -26,6 +26,9 @@ private:
 	friend void dispatch();
 	friend void exitThread();
 
+	//tmp friend
+	friend void doSomething();
+
 	unsigned bp;
 	unsigned sp;
 	unsigned ss;
@@ -35,6 +38,10 @@ private:
 	int id;
 
 	static int ID;
+
+	static void wrapper();
+
+	static volatile int fin;
 
 };
 

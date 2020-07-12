@@ -28,8 +28,8 @@ void exitThread(){
 }
 
 const int M = 20;
-int fin = 0;
 
+/*
 void f(){
 	for (int i =0; i < M; ++i) {
 			Kernel::Lock::CS_lock();
@@ -47,7 +47,7 @@ void f(){
 
 	exitThread();
 }
-
+*/
 
 const int N = 10;
 
@@ -60,7 +60,7 @@ void doSomething(){
 	p = new PCB*[N];
 
 	for (int br = 0; br < N; ++br) {
-		p[br] = new PCB(1024,(br%2)?15:10,f);  //(br%2)?40:20 da bi se niti razlikovale po vremenu izvrsavanja
+		p[br] = new PCB(1024,(br%2)?15:10, NULL);  //(br%2)?40:20 da bi se niti razlikovale po vremenu izvrsavanja
 		Scheduler::put(p[br]);
 	}
 
@@ -87,7 +87,7 @@ void doSomething(){
 		}
 	}
 
-	cout<<"fin on main end = "<<fin<<endl;
+	cout<<"fin on main end = "<<PCB::fin<<endl;
 	cout<<"Srecan kraj!"<<endl;
 }
 

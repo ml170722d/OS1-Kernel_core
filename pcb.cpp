@@ -8,6 +8,8 @@
 #include "pcb.h"
 #include "consts.h"
 
+#include "kernel.h"
+
 volatile PCB* PCB::runnig=0;
 
 int PCB::ID=0;
@@ -22,8 +24,8 @@ PCB::PCB(unsigned stackSize, int timeSlice, void (*body)()): state(PCB::NEW), qu
 		stack[stackSize-1] = 0x200;
 
 #ifndef BCC_BLOCK_IGNORE
-		stack[stackSize-2] = FP_SEG(body);
-		stack[stackSize-3] = FP_OFF(body);
+		stack[stackSize-2] = FP_SEG(PCB::wrapper);
+		stack[stackSize-3] = FP_OFF(PCB::wrapper);
 
 		sp = FP_OFF(stack+1012);
 		ss = FP_SEG(stack+1012);
@@ -31,4 +33,25 @@ PCB::PCB(unsigned stackSize, int timeSlice, void (*body)()): state(PCB::NEW), qu
 #endif
 
 		asm sti;
+}
+
+volatile int PCB::fin = 0;
+const int M = 20;
+
+void PCB::wrapper(){
+	for (int i =0; i < M; ++i) {
+		Kernel::Lock::CS_lock();
+		//cout<<"funkcija_"<<tid<<" "<<i<<endl;
+		Kernel::Lock::CS_unlock();
+		if(Kernel::CS_req)
+			dispatch();
+		for (int k = 0; k<10000; ++k)
+			for (int j = 0; j <30000; ++j);
+	}
+
+	Kernel::Lock::CS_lock();
+	cout<<"----------fin: "<<++PCB::fin<<endl;
+	Kernel::Lock::CS_unlock();
+
+	exitThread();
 }
