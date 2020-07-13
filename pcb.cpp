@@ -14,7 +14,7 @@
 
 int PCB::ID=0;
 
-PCB::PCB(): state(PCB::NEW), timeSlice(DEFAILT_TIME_SLICE), id(ID++), size(0), stack(0), sp(0), ss(0), bp(0), myThread(NULL) {
+PCB::PCB(): state(PCB::NEW), timeSlice(DEFAULT_TIME_SLICE), id(ID++), size(0), stack(0), sp(0), ss(0), bp(0), myThread(NULL) {
 	lock_I;
 
 	Kernel::all_pcb.add(this);
@@ -47,11 +47,12 @@ PCB::~PCB(){
 	lock_I;
 	delete stack;
 	//cout<<"del pcb id: "<<this->id<<endl;
+	Kernel::all_pcb.remove(this);
 	unlock_I;
 }
 
 volatile int PCB::fin = 0;
-const int M = 20;
+const int M = 50;
 
 void PCB::wrapper(){
 	for (int i =0; i < M; ++i) {
@@ -70,7 +71,6 @@ void PCB::wrapper(){
 	cout<<"----------fin: "<<PCB::fin<<", my id: "<<Kernel::running->id<<endl;
 	Kernel::Lock::CS_unlock();
 
-	//TODO: more improvements needed
 	lock_I;
 	LinkedList<PCB*>::Iterator it(NULL);
 
@@ -88,7 +88,6 @@ void PCB::wrapper(){
 }
 
 void PCB::start(){
-	//TODO: implement
 	lock_I;
 	//cout<<"start id: "<<id<<endl;
 	if (this->state == PCB::NEW){
@@ -99,9 +98,8 @@ void PCB::start(){
 }
 
 void PCB::waitToComplete(){
-	//TODO: implement
 	lock_I;
-	//cout<<"waitToComplete on "<<id<<endl;
+	cout << PCB::getRunningId() << " called waitToComplete on " << this->id << endl;
 
 	if (this == Kernel::running){
 		unlock_I;
@@ -113,9 +111,13 @@ void PCB::waitToComplete(){
 		this->waitingQueue.add((PCB*)Kernel::running);
 		unlock_I;
 		dispatch();
+		lock_I;
+		cout << PCB::getRunningId() << " finished waitToComplete on " << this->id << endl;
+		unlock_I;
 		return;
 	}
 
+	cout << PCB::getRunningId() << " called waitToComplete on " << this->id << " but it was already terminated" << endl;
 	unlock_I;
 }
 
@@ -128,6 +130,13 @@ _ID PCB::getRunningId(){
 }
 
 Thread* PCB::getThreadById(_ID id){
-	//TODO: implement
+	Kernel::Lock::CS_lock();
+	for (LinkedList<PCB*>::Iterator it = Kernel::all_pcb.begin(); it != Kernel::all_pcb.end(); ++it){
+		if ((*it)->id == id){
+			Kernel::Lock::CS_unlock();
+			return (*it)->myThread;
+		}
+	}
+	Kernel::Lock::CS_unlock();
 	return NULL;
 }

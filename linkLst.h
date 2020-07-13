@@ -103,38 +103,7 @@ public:
 
 	void clear();
 	void add(const T& e);
-
-	void remove(const T& e) {
-		LinkedListNode* it;
-		for (it = head; it != tail; it = it->next) {
-			if (it->data == e) {
-				cout << "found" << endl;
-				break;
-			}
-		}
-
-		if (it == head){
-			head = head->next;
-		}
-		if (it == tail){
-			tail = tail->prev;
-		}
-
-		LinkedListNode *next = it->next, *prev = it->prev;
-
-		if (prev != null) {
-			prev->next = next;
-		}
-		if (next != null) {
-			next->prev = prev;
-		}
-
-		it->next = it->prev = null;
-		size--;
-		//delete it->data;
-		it->data = null;
-
-	}
+	void remove(const T& e);
 
 protected:
 	int size;
@@ -155,6 +124,40 @@ void LinkedList<T>::add(const T& e) {
 
 	tail = newE;
 	size++;
+}
+
+template<class T>
+void LinkedList<T>::remove(const T& e) {
+	LinkedListNode* it;
+	for (it = head; it != tail; it = it->next) {
+		if (it->data == e) {
+			//cout << "found" << endl;
+			break;
+		}
+	}
+
+	if (it == head){
+		head = head->next;
+	}
+	if (it == tail){
+		tail = tail->prev;
+	}
+
+	LinkedListNode *next = it->next, *prev = it->prev;
+
+	if (prev != null) {
+		prev->next = next;
+	}
+	if (next != null) {
+		next->prev = prev;
+	}
+
+	it->next = it->prev = null;
+	size--;
+	//delete it->data;
+	it->data = null;
+	delete it;
+
 }
 
 template<class T>

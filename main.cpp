@@ -5,14 +5,6 @@
  *      Author: OS1
  */
 
-//  v2_zad4.cpp
-//  prevodjenje iz komandne linije: bcc -mh -Ic:\bc31\include -Lc:\bc31\lib v2_zad4.cpp
-
-//////////////////////////
-//dodata PCB.H i ostale izmene da bi radilo
-//////////////////////////
-
-//pretpostavljeni memorijski model: huge
 #include "SCHEDULE.H"
 #include "pcb.h"
 #include "linkLst.h"
@@ -24,40 +16,41 @@ PCB** p;
 
 const int N = 10;
 
+void waitForSomeTime(int n){
+	Kernel::Lock::CS_lock();
+	cout<<"start of nested lock"<<endl;
+	int i, j, k;
+	for (i = 0; i < n; i++)
+		for (j = 0; j < n; j++)
+			for (k = 0; k < n; k++){
+
+			}
+	cout<<"end of nested lock"<<endl;
+	Kernel::Lock::CS_unlock();
+}
+
 void doSomething(){
-	lock_I;
+	Kernel::Lock::CS_lock();
 
 	p = new PCB*[N];
 
 	int i;
 
 	for (i = 0; i < N; ++i) {
-		p[i] = new PCB(1024,(i%2)?30:20, NULL);  //(br%2)?40:20 da bi se niti razlikovale po vremenu izvrsavanja
+		p[i] = new PCB(1024,(i%2)?20:50, NULL);  //(br%2)?40:20 da bi se niti razlikovale po vremenu izvrsavanja
 		p[i]->start();
 	}
 
+	Kernel::Lock::CS_unlock();
 
+	dispatch();
 
-	unlock_I;
-
-	/*for (i = 0; i < M; ++i) {
-		lock_I;
-		cout<<"main "<<i<<endl;
-		unlock_I;
-
-		for (int j = 0; j< 10000; ++j)
-			for (int k = 0; k < 30000; ++k);
-
-		if (i%10 == 0){
-			Kernel::Lock::CS_lock();
-			cout<<"----------------------"<<endl;
-			cout<<"i = "<<i<<endl;
-			cout<<"----------------------"<<endl;
-			//tests_for_linkedList();
-			cout<<"----------------------"<<endl;
-			Kernel::Lock::CS_unlock();
-		}
-	}*/
+	Kernel::Lock::CS_lock();
+	cout<<"start wait main"<<endl;
+	waitForSomeTime(1000);
+	cout<<"end wait main"<<endl;
+	Kernel::Lock::CS_unlock();
+	//dispatch();
 
 	Kernel::Lock::CS_lock();
 	for (i = 0; i < N; i++){
@@ -67,11 +60,20 @@ void doSomething(){
 	Kernel::all_pcb.printList();
 	Kernel::Lock::CS_unlock();
 
-	for (i = 0; i < N; i++){
+	for (i = N - 1; i >= 0; i--){
 		delete p[i];
+		p[i] = null;
 	}
 	cout<<"all pcb terminated"<<endl;
 	delete p;
+
+	Kernel::Lock::CS_lock();
+	for (i = 0; i < N; i++){
+		cout << p[i]<<" ";
+	}
+	cout<<endl;
+	Kernel::all_pcb.printList();
+	Kernel::Lock::CS_unlock();
 
 	cout<<"fin on main end = "<<PCB::fin<<endl;
 	cout<<"Srecan kraj!"<<endl;

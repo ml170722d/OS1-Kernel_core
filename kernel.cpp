@@ -36,67 +36,63 @@ unsigned tid;
  */
 void interrupt timer(...) {
 	//cout<<"*"<<endl;
-	if (!Kernel::CS_req) Kernel::csCnt--;
-		if ((Kernel::csCnt == 0) || (Kernel::CS_req)) {
-			if(!Kernel::Lock::isLocked()){
+	if (!Kernel::CS_req) {
+		Kernel::csCnt--;
 
-				//cout<<"context switch ------------"<<endl;
-				Kernel::CS_req=0;
-				asm {
-					// cuva sp
-					mov tsp, sp
-					mov tss, ss
-					mov tbp, bp
-				}
+		oldTimer();
+	}
+	if ((Kernel::csCnt <= 0) || (Kernel::CS_req)) {
+		if(!Kernel::Lock::isLocked()){
 
-				Kernel::running->sp = tsp;
-				Kernel::running->ss=tss;
-				Kernel::running->bp=tbp;
-
-				// scheduler
-				//Kernel::running = getNextPCBToExecute();
-
-				//cout<<"old running id: "<<Kernel::running->id<<endl;
-				if((Kernel::running->state != PCB::TERMINATED) && (Kernel::running->state != PCB::BLOCKED)){
-					//cout<<"put"<<endl;
-					Scheduler::put((PCB*)Kernel::running);
-				}
-				Kernel::running = Scheduler::get();
-
-				if(Kernel::running->timeSlice == 0){
-					Scheduler::put((PCB*)Kernel::running);
-					cout<<"quantum=0, id: "<<Kernel::running->id<<endl;
-					Kernel::running=Scheduler::get();
-				}
-
-				//cout<<"new running id: "<<Kernel::running->id<<endl;
-
-				tsp = Kernel::running->sp;
-				tss = Kernel::running->ss;
-				tbp = Kernel::running->bp;
-
-				tid = Kernel::running->id;
-				Kernel::csCnt = Kernel::running->timeSlice;
-
-
-				asm {
-					// restaurira sp
-					mov sp, tsp
-					mov ss, tss
-					mov bp, tbp
-				}
+			cout<<"context switch ------------"<<endl;
+			Kernel::CS_req = false;
+			asm {
+				// cuva sp
+				mov tsp, sp
+				mov tss, ss
+				mov tbp, bp
 			}
-			else{
-				Kernel::CS_req=1;
+
+			Kernel::running->sp = tsp;
+			Kernel::running->ss=tss;
+			Kernel::running->bp=tbp;
+
+			// scheduler
+			//Kernel::running = getNextPCBToExecute();
+
+			//cout<<"old running id: "<<Kernel::running->id<<endl;
+			if((Kernel::running->state != PCB::TERMINATED) && (Kernel::running->state != PCB::BLOCKED)){
+				//cout<<"put"<<endl;
+				Scheduler::put((PCB*)Kernel::running);
 			}
+			Kernel::running = Scheduler::get();
+
+			if(Kernel::running->timeSlice == 0){
+				Scheduler::put((PCB*)Kernel::running);
+				cout<<"quantum=0, id: "<<Kernel::running->id<<endl;
+				Kernel::running=Scheduler::get();
+			}
+
+			//cout<<"new running id: "<<Kernel::running->id<<endl;
+
+			tsp = Kernel::running->sp;
+			tss = Kernel::running->ss;
+			tbp = Kernel::running->bp;
+
+			tid = Kernel::running->id;
+			Kernel::csCnt = Kernel::running->timeSlice;
+
+
+			asm {
+				// restaurira sp
+				mov sp, tsp
+				mov ss, tss
+				mov bp, tbp
+			}
+		}else{
+			Kernel::CS_req = true;
 		}
-
-		// poziv stare prekidne rutine
-		// koja se nalazila na 08h, a sad je na 60h;
-		// poziva se samo kada nije zahtevana promena konteksta
-		// tako da se stara rutina poziva
-		// samo kada je stvarno doslo do prekida
-		if(!Kernel::CS_req) asm int 60h;
+	}
 }
 
 void Kernel::allocateResources() {
@@ -143,8 +139,7 @@ void Kernel::requestCS() {
 }
 
 PCB* Kernel::getRunning(){
-	//TODO: implement correctly
-	return null;
+	return (PCB*)Kernel::running;
 }
 
 /*
@@ -156,6 +151,7 @@ PCB* Kernel::Lock::owner = null;
 
 void Kernel::Lock::CS_lock(){
 	lock_I;
+	//cout<<"lock -> owner: "<<owner<<", runnning: "<<(PCB*)Kernel::running<<endl;
 	if (owner == null){
 		owner = (PCB*) Kernel::running;
 	}
@@ -173,6 +169,7 @@ void Kernel::Lock::CS_lock(){
 
 void Kernel::Lock::CS_unlock(){
 	lock_I;
+	//cout<<"unlock -> owner: "<<owner<<", runnning: "<<(PCB*)Kernel::running<<endl;
 	if ((owner == null) || (owner != Kernel::running)){
 		unlock_I;
 		return;
@@ -187,17 +184,22 @@ void Kernel::Lock::CS_unlock(){
 }
 
 boolean Kernel::Lock::isLocked(){
+	lock_I;
+	//cout<<"lockCont: "<<lockCond<<", lockCnt: "<<lockCnt<<", owner: "<<owner->id<<endl;
+	unlock_I;
 	return lockCond;
 }
 
 
 /*
+ * TODO: should be moved to thread.cpp (asked in project)
  * defining dispatch
+ * NOTE: dispatch can't be called from code inside context switch block (it has no effect otherwise)
  */
 void dispatch(){
 	Kernel::requestCS(); //makes sure it is not interrupted for itself
 	lock_I;
-	//cout<<"disp"<<endl;
+	cout<<"disp: "<<PCB::getRunningId()<<endl;
 	timer();
 	unlock_I
 }
