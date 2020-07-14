@@ -1,0 +1,15 @@
+test_100_processes and test_200_processes can't be tested in console, they must be tested in output file
+test_100_processes and test_200_processes work, but console can't be valid test because there is to much output lines
+
+to create output file, in command line enter name_of_project.exe > name_of_output file.txt
+output txt file is located in BCC folder of project
+
+
+
+NOTE:
+	to test yourself, just change N value in main.cpp and if you want to check timer, commant or uncomment cout(s)
+
+
+
+NOTE:
+	at this point, core of system is working as it should!!!
