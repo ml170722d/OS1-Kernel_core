@@ -52,7 +52,7 @@ PCB::~PCB(){
 }
 
 volatile int PCB::fin = 0;
-const int M = 50;
+const int M = 20;
 
 void PCB::wrapper(){
 

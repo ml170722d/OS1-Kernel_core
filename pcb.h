@@ -11,8 +11,6 @@
 #include "consts.h"
 #include "linkLst.h"
 
-#include "kernel.h"
-
 class Thread;
 
 class PCB{
@@ -42,10 +40,9 @@ public:
 
 protected:
 
-	/*
-	 * friend classes and functions
-	 */
 	friend void interrupt timer(...);
+	friend void dispatch();
+	friend void exitThread();
 
 private:
 

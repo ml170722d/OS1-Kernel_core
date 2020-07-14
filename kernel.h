@@ -26,22 +26,13 @@ public:
 	 */
 	class Lock{
 	public:
-		/*
-		 * lock context switch
-		 */
 		static void CS_lock();
-
-		/*
-		 * unlock context switch
-		 */
 		static void CS_unlock();
 		/*
 		 * return false if lock is unlocked and context can be switched, otherwise true;
 		 */
 		static boolean isLocked();
-
 	private:
-
 		static PCB* owner;
 		static volatile int lockCnt;
 		static volatile boolean lockCond;
@@ -88,9 +79,6 @@ protected:
 	 */
 	static void freeResources();
 
-	/*
-	 * friend classes and functions
-	 */
 	friend class PCB;
 	friend class Lock;
 	friend void interrupt timer(...);
@@ -128,9 +116,6 @@ private:
 
 };
 
-/*
- * synchronized context switch
- */
 void dispatch();
 
 #endif /* KERNEL_H_ */
