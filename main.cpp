@@ -12,7 +12,7 @@
 
 #include "consts.h"
 
-const int N = 200;
+const int N = 10;
 
 void doSomething1() {
 	Kernel::Lock::CS_lock();
