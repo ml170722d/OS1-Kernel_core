@@ -37,7 +37,7 @@ unsigned tid;
 void interrupt timer(...) {
 	//cout<<"*"<<endl;
 	if (!Kernel::CS_req) Kernel::csCnt--;
-		if ((Kernel::csCnt == 0) || (Kernel::CS_req)) {
+		if ((Kernel::csCnt <= 0) || (Kernel::CS_req)) {
 			if(!Kernel::Lock::isLocked()){
 
 				//cout<<"context switch ------------"<<endl;
@@ -143,10 +143,14 @@ void Kernel::requestCS() {
 }
 
 PCB* Kernel::getRunning(){
-	//TODO: implement correctly
-	return null;
+	return (PCB*)Kernel::running;
 }
 
+void Kernel::printAllPCB(){
+	Kernel::Lock::CS_lock();
+	Kernel::all_pcb.printList();
+	Kernel::Lock::CS_unlock();
+}
 /*
  * Kernel::Lock function definitions
  */

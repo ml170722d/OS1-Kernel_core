@@ -47,6 +47,7 @@ PCB::~PCB(){
 	lock_I;
 	delete stack;
 	//cout<<"del pcb id: "<<this->id<<endl;
+	Kernel::all_pcb.remove(this);
 	unlock_I;
 }
 
@@ -54,10 +55,10 @@ volatile int PCB::fin = 0;
 const int M = 20;
 
 void PCB::wrapper(){
+
+	//TODO: needs to call thread->run() to complete PCB class completely
 	for (int i =0; i < M; ++i) {
-		Kernel::Lock::CS_lock();
-		//cout<<"funkcija_"<<Kernel::running->id<<" "<<i<<endl;
-		Kernel::Lock::CS_unlock();
+
 		if(Kernel::CS_req)
 			dispatch();
 		for (int k = 0; k<10000; ++k)
@@ -70,13 +71,10 @@ void PCB::wrapper(){
 	cout<<"----------fin: "<<PCB::fin<<", my id: "<<Kernel::running->id<<endl;
 	Kernel::Lock::CS_unlock();
 
-	//TODO: more improvements needed
 	lock_I;
-	LinkedList<PCB*>::Iterator it(NULL);
+	LinkedList<PCB*>::Iterator it;
 
 	Kernel::running->state = PCB::TERMINATED;
-
-	//((PCB*)Kernel::running)->waitingQueue.printList();
 
 	for (it = ((PCB*)Kernel::running)->waitingQueue.begin(); it != ((PCB*)Kernel::running)->waitingQueue.end(); ++it){
 		(*it)->state = PCB::READY;
@@ -88,7 +86,6 @@ void PCB::wrapper(){
 }
 
 void PCB::start(){
-	//TODO: implement
 	lock_I;
 	//cout<<"start id: "<<id<<endl;
 	if (this->state == PCB::NEW){
@@ -99,11 +96,11 @@ void PCB::start(){
 }
 
 void PCB::waitToComplete(){
-	//TODO: implement
 	lock_I;
-	//cout<<"waitToComplete on "<<id<<endl;
+	cout<<PCB::getRunningId()<<" called waitToComplete on "<<id<<endl;
 
 	if (this == Kernel::running){
+		cout<<PCB::getRunningId()<<" called waitToComplete on "<<id<<" -> can't wait on itself"<<endl;
 		unlock_I;
 		return;
 	}
@@ -113,8 +110,13 @@ void PCB::waitToComplete(){
 		this->waitingQueue.add((PCB*)Kernel::running);
 		unlock_I;
 		dispatch();
+		lock_I;
+		cout<<PCB::getRunningId()<<" finished waitToComplete on "<<id<<endl;
+		unlock_I;
 		return;
 	}
+
+	cout<<PCB::getRunningId()<<" called waitToComplete on "<<id<<", but it is already terminated"<<endl;
 
 	unlock_I;
 }
@@ -128,6 +130,13 @@ _ID PCB::getRunningId(){
 }
 
 Thread* PCB::getThreadById(_ID id){
-	//TODO: implement
+	Kernel::Lock::CS_lock();
+	for (LinkedList<PCB*>::Iterator it = Kernel::all_pcb.begin(); it != Kernel::all_pcb.end(); ++it){
+		if ((*it)->id == id){
+			Kernel::Lock::CS_unlock();
+			return (*it)->myThread;
+		}
+	}
+	Kernel::Lock::CS_unlock();
 	return NULL;
 }

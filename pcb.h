@@ -22,6 +22,9 @@ public:
 	PCB(StackSize stackSize, Time timeSlice, Thread* myThread = NULL);
 	virtual ~PCB();
 
+	/*
+	 * functions needed for project
+	 */
 	void start();
 	void waitToComplete();
 
@@ -29,6 +32,8 @@ public:
 	static _ID getRunningId();
 	static Thread* getThreadById(_ID id);
 
+	//tmp variable
+	static volatile int fin;
 
 protected:
 
@@ -36,31 +41,41 @@ protected:
 	friend void dispatch();
 	friend void exitThread();
 
-	//tmp friend
-	friend void doSomething();
-
 private:
 
+	/*
+	 * variables to save context
+	 */
 	unsigned bp;
 	unsigned sp;
 	unsigned ss;
 
+
 	State state;
 	_ID id;
-
-	unsigned* stack;
-	StackSize size;
 	Time timeSlice;
 
+	/*
+	 * stack of process
+	 */
+	unsigned* stack;
+	StackSize size;
+
+	/*
+	 * wrapper of class PCB
+	 */
 	Thread* myThread;
+
+	/*
+	 * queue for all processes waiting on this process to finish
+	 */
 	LinkedList<PCB*> waitingQueue;
 
+	/*
+	 * no one need to know about this except PCB class
+	 */
 	static _ID ID;
-
 	static void wrapper();
-
-	//tmp variable
-	static volatile int fin;
 
 };
 

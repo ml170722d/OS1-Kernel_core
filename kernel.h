@@ -19,7 +19,7 @@ class PCB;
 void interrupt timer(...);
 
 class Kernel {
-private:
+public:
 	/*
 	 * class that is meant to allow for nested
 	 * context switch locking
@@ -28,13 +28,15 @@ private:
 	public:
 		static void CS_lock();
 		static void CS_unlock();
+		/*
+		 * return false if lock is unlocked and context can be switched, otherwise true;
+		 */
 		static boolean isLocked();
 	private:
 		static PCB* owner;
 		static volatile int lockCnt;
-		static volatile boolean lockCond; //false -> unlocked, true -> locked
+		static volatile boolean lockCond;
 	};
-public:
 
 	/*
 	 * initialize system
@@ -53,18 +55,27 @@ public:
 
 	/*
 	 * request for context switch
+	 * it is thread safe
 	 */
 	static void requestCS();
+
+	/*
+	 * prints out list of all created pcbs;
+	 * it is thread safe
+	 */
+	static void printAllPCB();
 
 protected:
 
 	/*
-	 * allocates resources for system
+	 * allocates resources for system;
+	 * it is thread safe
 	 */
 	static void allocateResources();
 
 	/*
-	 * frees resources occupied by system
+	 * frees resources occupied by system;
+	 * it is thread safe
 	 */
 	static void freeResources();
 
@@ -72,10 +83,9 @@ protected:
 	friend class Lock;
 	friend void interrupt timer(...);
 
-	//TODO: delete temp friend functions and classes
-	friend void f(); //does not exist
-	friend void exitThread(); //does not exist
-	friend void doSomething();
+	//TODO: delete tmp friends
+	friend void doSomething1();
+	friend void doSomething2();
 
 private:
 
