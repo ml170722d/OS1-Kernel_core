@@ -45,7 +45,7 @@ public:
 	 */
 	class Iterator {
 	public:
-		Iterator(LinkedListNode* e) :
+		Iterator(LinkedListNode* e = NULL) :
 				elem(e) {
 		}
 

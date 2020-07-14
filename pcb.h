@@ -28,7 +28,7 @@ public:
 	virtual ~PCB();
 
 	/*
-	 * functions required to complete core of project
+	 * functions needed for project
 	 */
 	void start();
 	void waitToComplete();
@@ -47,45 +47,38 @@ protected:
 	 */
 	friend void interrupt timer(...);
 
-	//tmp friend
-	friend void doSomething();
-	friend class Kernel::Lock;
-
 private:
 
 	/*
-	 * variables to store context
+	 * variables to save context
 	 */
 	unsigned bp;
 	unsigned sp;
 	unsigned ss;
 
+
 	State state;
 	_ID id;
+	Time timeSlice;
 
 	/*
-	 * stack for this process
+	 * stack of process
 	 */
 	unsigned* stack;
 	StackSize size;
 
 	/*
-	 * processes time slice
-	 */
-	Time timeSlice;
-
-	/*
-	 * process wrapper class
+	 * wrapper of class PCB
 	 */
 	Thread* myThread;
 
 	/*
-	 * queue of blocked processes on this process
+	 * queue for all processes waiting on this process to finish
 	 */
 	LinkedList<PCB*> waitingQueue;
 
 	/*
-	 * no one needs to know about this except PCB class
+	 * no one need to know about this except PCB class
 	 */
 	static _ID ID;
 	static void wrapper();

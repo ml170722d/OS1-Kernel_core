@@ -12,78 +12,73 @@
 
 #include "consts.h"
 
-PCB** p;
+const int N = 200;
 
-const int N = 10;
-
-void waitForSomeTime(int n){
+void doSomething1() {
 	Kernel::Lock::CS_lock();
-	cout<<"start of nested lock"<<endl;
-	int i, j, k;
-	for (i = 0; i < n; i++)
-		for (j = 0; j < n; j++)
-			for (k = 0; k < n; k++){
-
-			}
-	cout<<"end of nested lock"<<endl;
-	Kernel::Lock::CS_unlock();
-}
-
-void doSomething(){
-	Kernel::Lock::CS_lock();
-
-	p = new PCB*[N];
+	PCB* p[N];
 
 	int i;
 
 	for (i = 0; i < N; ++i) {
-		p[i] = new PCB(1024,(i%2)?20:50, NULL);  //(br%2)?40:20 da bi se niti razlikovale po vremenu izvrsavanja
+		p[i] = new PCB(1024, (i % 2) ? 10 : 100, NULL);
 		p[i]->start();
 	}
-
 	Kernel::Lock::CS_unlock();
 
-	dispatch();
+/////////////////////////////////////////////////////////////
 
 	Kernel::Lock::CS_lock();
-	cout<<"start wait main"<<endl;
-	waitForSomeTime(1000);
-	cout<<"end wait main"<<endl;
-	Kernel::Lock::CS_unlock();
-	//dispatch();
-
-	Kernel::Lock::CS_lock();
-	for (i = 0; i < N; i++){
-		cout << p[i]<<" ";
+	for (i = 0; i < N; i++) {
+		cout << p[i] << " ";
 	}
-	cout<<endl;
-	Kernel::all_pcb.printList();
+	cout << endl;
+	Kernel::printAllPCB();
 	Kernel::Lock::CS_unlock();
 
-	for (i = N - 1; i >= 0; i--){
+/////////////////////////////////////////////////////////////
+
+	for (i = 0; i < N; i++) {
 		delete p[i];
-		p[i] = null;
+		p[i] = NULL;
 	}
-	cout<<"all pcb terminated"<<endl;
-	delete p;
-
 	Kernel::Lock::CS_lock();
-	for (i = 0; i < N; i++){
-		cout << p[i]<<" ";
-	}
-	cout<<endl;
-	Kernel::all_pcb.printList();
+	cout << "all pcb terminated" << endl;
 	Kernel::Lock::CS_unlock();
 
-	cout<<"fin on main end = "<<PCB::fin<<endl;
-	cout<<"Srecan kraj!"<<endl;
+/////////////////////////////////////////////////////////////
+
+	Kernel::Lock::CS_lock();
+	for (i = 0; i < N; i++) {
+		cout << p[i] << " ";
+	}
+	cout << endl;
+	Kernel::printAllPCB();
+	Kernel::Lock::CS_unlock();
+
+/////////////////////////////////////////////////////////////
+
+	Kernel::Lock::CS_lock();
+	cout << "fin on main end = " << PCB::fin << endl;
+	cout << "Happy end for doSomethig1()!" << endl;
+	Kernel::Lock::CS_unlock();
 }
 
-int main(){
+void doSomething2() {
+
+	Kernel::Lock::CS_lock();
+	cout << "fin on main end = " << PCB::fin << endl;
+	cout << "Happy end for doSomethig2()!" << endl;
+	Kernel::Lock::CS_unlock();
+}
+
+int main() {
 
 	Kernel::init();
 
-	doSomething();
+	doSomething1();
+
+	doSomething2();
 
 	Kernel::restore();
 

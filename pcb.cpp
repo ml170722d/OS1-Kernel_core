@@ -55,10 +55,10 @@ volatile int PCB::fin = 0;
 const int M = 50;
 
 void PCB::wrapper(){
+
+	//TODO: needs to call thread->run() to complete PCB class completely
 	for (int i =0; i < M; ++i) {
-		Kernel::Lock::CS_lock();
-		//cout<<"funkcija_"<<Kernel::running->id<<" "<<i<<endl;
-		Kernel::Lock::CS_unlock();
+
 		if(Kernel::CS_req)
 			dispatch();
 		for (int k = 0; k<10000; ++k)
@@ -72,11 +72,9 @@ void PCB::wrapper(){
 	Kernel::Lock::CS_unlock();
 
 	lock_I;
-	LinkedList<PCB*>::Iterator it(NULL);
+	LinkedList<PCB*>::Iterator it;
 
 	Kernel::running->state = PCB::TERMINATED;
-
-	//((PCB*)Kernel::running)->waitingQueue.printList();
 
 	for (it = ((PCB*)Kernel::running)->waitingQueue.begin(); it != ((PCB*)Kernel::running)->waitingQueue.end(); ++it){
 		(*it)->state = PCB::READY;
@@ -99,9 +97,10 @@ void PCB::start(){
 
 void PCB::waitToComplete(){
 	lock_I;
-	cout << PCB::getRunningId() << " called waitToComplete on " << this->id << endl;
+	cout<<PCB::getRunningId()<<" called waitToComplete on "<<id<<endl;
 
 	if (this == Kernel::running){
+		cout<<PCB::getRunningId()<<" called waitToComplete on "<<id<<" -> can't wait on itself"<<endl;
 		unlock_I;
 		return;
 	}
@@ -112,12 +111,13 @@ void PCB::waitToComplete(){
 		unlock_I;
 		dispatch();
 		lock_I;
-		cout << PCB::getRunningId() << " finished waitToComplete on " << this->id << endl;
+		cout<<PCB::getRunningId()<<" finished waitToComplete on "<<id<<endl;
 		unlock_I;
 		return;
 	}
 
-	cout << PCB::getRunningId() << " called waitToComplete on " << this->id << " but it was already terminated" << endl;
+	cout<<PCB::getRunningId()<<" called waitToComplete on "<<id<<", but it is already terminated"<<endl;
+
 	unlock_I;
 }
 

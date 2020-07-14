@@ -36,21 +36,55 @@ unsigned tid;
  */
 void interrupt timer(...) {
 	//cout<<"*"<<endl;
-	if (!Kernel::CS_req) {
-		Kernel::csCnt--;
+	if (!Kernel::CS_req) Kernel::csCnt--;
+		if ((Kernel::csCnt <= 0) || (Kernel::CS_req)) {
+			if(!Kernel::Lock::isLocked()){
 
-		oldTimer();
-	}
-	if ((Kernel::csCnt <= 0) || (Kernel::CS_req)) {
-		if(!Kernel::Lock::isLocked()){
+				//cout<<"context switch ------------"<<endl;
+				Kernel::CS_req=0;
+				asm {
+					// cuva sp
+					mov tsp, sp
+					mov tss, ss
+					mov tbp, bp
+				}
 
-			cout<<"context switch ------------"<<endl;
-			Kernel::CS_req = false;
-			asm {
-				// cuva sp
-				mov tsp, sp
-				mov tss, ss
-				mov tbp, bp
+				Kernel::running->sp = tsp;
+				Kernel::running->ss=tss;
+				Kernel::running->bp=tbp;
+
+				// scheduler
+				//Kernel::running = getNextPCBToExecute();
+
+				//cout<<"old running id: "<<Kernel::running->id<<endl;
+				if((Kernel::running->state != PCB::TERMINATED) && (Kernel::running->state != PCB::BLOCKED)){
+					//cout<<"put"<<endl;
+					Scheduler::put((PCB*)Kernel::running);
+				}
+				Kernel::running = Scheduler::get();
+
+				if(Kernel::running->timeSlice == 0){
+					Scheduler::put((PCB*)Kernel::running);
+					cout<<"quantum=0, id: "<<Kernel::running->id<<endl;
+					Kernel::running=Scheduler::get();
+				}
+
+				//cout<<"new running id: "<<Kernel::running->id<<endl;
+
+				tsp = Kernel::running->sp;
+				tss = Kernel::running->ss;
+				tbp = Kernel::running->bp;
+
+				tid = Kernel::running->id;
+				Kernel::csCnt = Kernel::running->timeSlice;
+
+
+				asm {
+					// restaurira sp
+					mov sp, tsp
+					mov ss, tss
+					mov bp, tbp
+				}
 			}
 
 			Kernel::running->sp = tsp;
@@ -142,6 +176,11 @@ PCB* Kernel::getRunning(){
 	return (PCB*)Kernel::running;
 }
 
+void Kernel::printAllPCB(){
+	Kernel::Lock::CS_lock();
+	Kernel::all_pcb.printList();
+	Kernel::Lock::CS_unlock();
+}
 /*
  * Kernel::Lock function definitions
  */

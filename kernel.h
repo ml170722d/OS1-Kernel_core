@@ -35,9 +35,8 @@ public:
 		 * unlock context switch
 		 */
 		static void CS_unlock();
-
 		/*
-		 * return false if lock is free/unlocked, otherwise true
+		 * return false if lock is unlocked and context can be switched, otherwise true;
 		 */
 		static boolean isLocked();
 
@@ -46,7 +45,6 @@ public:
 		static PCB* owner;
 		static volatile int lockCnt;
 		static volatile boolean lockCond;
-
 	};
 
 	/*
@@ -66,18 +64,27 @@ public:
 
 	/*
 	 * request for context switch
+	 * it is thread safe
 	 */
 	static void requestCS();
+
+	/*
+	 * prints out list of all created pcbs;
+	 * it is thread safe
+	 */
+	static void printAllPCB();
 
 protected:
 
 	/*
-	 * allocates resources for system
+	 * allocates resources for system;
+	 * it is thread safe
 	 */
 	static void allocateResources();
 
 	/*
-	 * frees resources occupied by system
+	 * frees resources occupied by system;
+	 * it is thread safe
 	 */
 	static void freeResources();
 
@@ -88,8 +95,9 @@ protected:
 	friend class Lock;
 	friend void interrupt timer(...);
 
-	//tmp friend
-	friend void doSomething();
+	//TODO: delete tmp friends
+	friend void doSomething1();
+	friend void doSomething2();
 
 private:
 

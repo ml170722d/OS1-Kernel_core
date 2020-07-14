@@ -15,7 +15,7 @@
 #include <dos.h>
 
 /*
- * defining my own types
+ * definition of custom types
  */
 typedef void interrupt (*pInterrupt)(...);
 typedef unsigned int Time;
@@ -25,7 +25,7 @@ typedef unsigned short int boolean;
 typedef short int  ptr;
 
 /*
- * defining consts
+ * definition of constanst
  */
 const StackSize DEFAULT_STACK_SIZE = 4096;
 const Time DEFAULT_TIME_SLICE = 2;
@@ -34,12 +34,10 @@ const boolean false = 0;
 const ptr null = 0;
 
 /*
- * defining macros
+ * definition of macros
  */
 #define lock_I asm cli
 #define unlock_I asm sti
 #define NULL 0
-#define TRUE 1
-#define FALSE 0
 
 #endif /* CONSTS_H_ */
