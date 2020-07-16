@@ -1,0 +1,478 @@
+0x0e620004 0x0ee80004 0x0f6e0004 0x0ff40004 0x107a0004 
+0x0e5e0004 0x0e620004 0x0ee80004 0x0f6e0004 0x0ff40004 0x107a0004 
+0 called waitToComplete on 1
+*
+context switch ------------
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+----------fin: 1, my id: 5
+*
+context switch ------------
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+context switch ------------
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+----------fin: 2, my id: 3
+*
+context switch ------------
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+context switch ------------
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+----------fin: 3, my id: 1
+*
+context switch ------------
+0 finished waitToComplete on 1
+found
+0 called waitToComplete on 2
+*
+context switch ------------
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+context switch ------------
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+context switch ------------
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+context switch ------------
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+context switch ------------
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+context switch ------------
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+context switch ------------
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+context switch ------------
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+context switch ------------
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+context switch ------------
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+context switch ------------
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+context switch ------------
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+context switch ------------
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+context switch ------------
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+context switch ------------
+*
+*
+*
+*
+*
+*
+----------fin: 4, my id: 4
+*
+context switch ------------
+*
+----------fin: 5, my id: 2
+*
+context switch ------------
+0 finished waitToComplete on 2
+found
+0 called waitToComplete on 3
+0 called waitToComplete on 3, but it is already terminated
+found
+0 called waitToComplete on 4
+0 called waitToComplete on 4, but it is already terminated
+found
+0 called waitToComplete on 5
+0 called waitToComplete on 5, but it is already terminated
+all pcb terminated
+0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 
+0x0e5e0004 
+fin on main end = 5
+Happy end for doSomethig1()!
+fin on main end = 5
+Happy end for doSomethig2()!
+0 called waitToComplete on 0
+0 called waitToComplete on 0 -> can't wait on itself
