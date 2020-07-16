@@ -25,7 +25,7 @@ PCB::PCB(): state(PCB::NEW), timeSlice(DEFAULT_TIME_SLICE), id(ID++), size(0), s
 
 PCB::PCB(StackSize stackSize, Time _timeSlice, Thread* _myThread): state(PCB::NEW), size(stackSize),
 		timeSlice(_timeSlice), myThread(_myThread), id(ID++), sp(0), ss(0), bp(0) {
-		asm cli;
+		lock_I;
 
 		stack = new unsigned [stackSize];
 		stack[stackSize-1] = 0x200;
@@ -40,7 +40,7 @@ PCB::PCB(StackSize stackSize, Time _timeSlice, Thread* _myThread): state(PCB::NE
 #endif
 
 		Kernel::all_pcb.add(this);
-		asm sti;
+		unlock_I;
 }
 
 PCB::~PCB(){
@@ -106,6 +106,12 @@ void PCB::waitToComplete(){
 
 	if (this == Kernel::running){
 		//cout<<PCB::getRunningId()<<" called waitToComplete on "<<id<<" -> can't wait on itself"<<endl;
+		unlock_I;
+		return;
+	}
+
+	if ((Kernel::running->id == Kernel::idle_thread->getId()) || (this->id == Kernel::idle_thread->getId())){
+		cout<<"can't wait on idle"<<endl;
 		unlock_I;
 		return;
 	}

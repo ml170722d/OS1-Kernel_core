@@ -17,6 +17,7 @@ PCB* Kernel::main_pcb = NULL;
 volatile boolean Kernel::CS_req = false;
 volatile int Kernel::csCnt = 20;//DEFAULT_TIME_SLICE;
 volatile PCB* Kernel::running = NULL;
+Kernel::Idle* Kernel::idle_thread = NULL;
 
 
 
@@ -56,17 +57,18 @@ void interrupt timer(...) {
 				// scheduler
 				//Kernel::running = getNextPCBToExecute();
 
-				//cout<<"old running id: "<<Kernel::running->id<<endl;
-				if((Kernel::running->state != PCB::TERMINATED) && (Kernel::running->state != PCB::BLOCKED)){
+				//cout<<"idle prt: "<<Kernel::idle_thread<<endl;
+				//cout<<"old running id: "<<Kernel::running->id<<", state: "<<Kernel::running->state<<endl;
+
+				if((Kernel::running->state != PCB::TERMINATED) && (Kernel::running->state != PCB::BLOCKED) && (Kernel::running->id != Kernel::idle_thread->getId())){
 					//cout<<"put"<<endl;
+					Kernel::running->state = PCB::READY;
 					Scheduler::put((PCB*)Kernel::running);
 				}
 				Kernel::running = Scheduler::get();
 
-				if(Kernel::running->timeSlice == 0){
-					Scheduler::put((PCB*)Kernel::running);
-					cout<<"quantum=0, id: "<<Kernel::running->id<<endl;
-					Kernel::running=Scheduler::get();
+				if (Kernel::running == 0){
+					Kernel::running = Kernel::idle_thread->myPCB;
 				}
 
 				//cout<<"new running id: "<<Kernel::running->id<<endl;
@@ -75,8 +77,9 @@ void interrupt timer(...) {
 				tss = Kernel::running->ss;
 				tbp = Kernel::running->bp;
 
-				tid = Kernel::running->id;
+				//tid = Kernel::running->id;
 				Kernel::csCnt = Kernel::running->timeSlice;
+				Kernel::running->state = PCB::RUNNING;
 
 
 				asm {
@@ -103,15 +106,12 @@ void interrupt timer(...) {
 }
 
 void Kernel::allocateResources() {
-	lock_I;
 	Kernel::main_pcb = new PCB();
-	unlock_I;
+	Kernel::idle_thread = new Idle();
 }
 
 void Kernel::freeResources() {
-	lock_I;
 	delete Kernel::main_pcb;
-	unlock_I;
 }
 
 void Kernel::init() {
@@ -194,7 +194,24 @@ void Kernel::Lock::CS_unlock(){
 }
 
 boolean Kernel::Lock::isLocked(){
+	lock_I;
+	//cout<<"lockCont: "<<lockCond<<", lockCnt: "<<lockCnt<<endl;
+	unlock_I;
 	return lockCond;
+}
+
+
+Kernel::Idle::Idle(): Thread(DEFAULT_STACK_SIZE, 0), is_active(true) {}
+
+Kernel::Idle::~Idle(){
+	is_active = false;
+	//waitToComplete();
+}
+
+void Kernel::Idle::run(){
+	while (1) {
+		//syncPrintf("*");
+	}
 }
 
 

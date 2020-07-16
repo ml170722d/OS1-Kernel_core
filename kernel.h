@@ -83,6 +83,7 @@ protected:
 	friend class PCB;
 	friend class Lock;
 	friend void interrupt timer(...);
+	friend class Thread;
 
 	//TODO: delete tmp friends
 	friend void doSomething1();
@@ -114,6 +115,18 @@ private:
 	 * list of all created PCBs
 	 */
 	static LinkedList<PCB*> all_pcb;
+
+	class Idle: public Thread{
+	public:
+		Idle();
+		~Idle();
+	protected:
+		virtual void run();
+	private:
+		boolean is_active;
+	};
+
+	static Idle* idle_thread;
 
 };
 

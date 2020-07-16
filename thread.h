@@ -26,6 +26,7 @@ public:
 protected:
 
 	friend class PCB;
+	friend void interrupt timer(...);
 	Thread(StackSize ss = DEFAULT_STACK_SIZE, Time ts = DEFAULT_TIME_SLICE);
 	virtual void run() {}
 

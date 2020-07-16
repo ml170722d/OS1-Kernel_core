@@ -130,25 +130,41 @@ void doSomething2() {
 
 }
 */
+
+class A: public Thread{
+public:
+	A():Thread(){}
+	~A(){
+		waitToComplete();
+	}
+protected:
+	virtual void run(){
+		cout<<"hi"<<endl;
+	}
+};
+
 extern int syncPrintf(const char *format, ...);
 extern int userMain(int argc, char** argv);
+
+void f(){
+
+}
 
 void doSomething3(){
 	userMain(0, NULL);
 }
 
-int main() {
+int main(int argc, char** argv) {
+
+	syncPrintf("Starting system\n");
 
 	Kernel::init();
 
-	//doSomething1();
-
-	//doSomething2();
-
-	doSomething3();
+	userMain(argc, argv);
 
 	Kernel::restore();
 
+	syncPrintf("System shutting down");
 	return 0;
 
 }
