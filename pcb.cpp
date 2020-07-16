@@ -6,6 +6,7 @@
  */
 
 #include "pcb.h"
+#include "thread.h"
 #include "consts.h"
 
 #include "kernel.h"
@@ -51,12 +52,13 @@ PCB::~PCB(){
 	unlock_I;
 }
 
-volatile int PCB::fin = 0;
+//volatile int PCB::fin = 0;
 const int M = 20;
 
 void PCB::wrapper(){
 
 	//TODO: needs to call thread->run() to complete PCB class completely
+	/*
 	for (int i =0; i < M; ++i) {
 
 		if(Kernel::CS_req)
@@ -66,9 +68,12 @@ void PCB::wrapper(){
 	}
 
 	PCB::fin++;
+	*/
+
+	Kernel::running->myThread->run();
 
 	Kernel::Lock::CS_lock();
-	cout<<"----------fin: "<<PCB::fin<<", my id: "<<Kernel::running->id<<endl;
+	//cout<<"----------fin: "<<PCB::fin<<", my id: "<<Kernel::running->id<<endl;
 	Kernel::Lock::CS_unlock();
 
 	lock_I;

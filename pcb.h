@@ -36,7 +36,7 @@ public:
 	static Thread* getThreadById(_ID id);
 
 	//tmp variable
-	static volatile int fin;
+	//static volatile int fin;
 
 protected:
 
