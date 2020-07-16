@@ -97,10 +97,10 @@ void PCB::start(){
 
 void PCB::waitToComplete(){
 	lock_I;
-	cout<<PCB::getRunningId()<<" called waitToComplete on "<<id<<endl;
+	//cout<<PCB::getRunningId()<<" called waitToComplete on "<<id<<endl;
 
 	if (this == Kernel::running){
-		cout<<PCB::getRunningId()<<" called waitToComplete on "<<id<<" -> can't wait on itself"<<endl;
+		//cout<<PCB::getRunningId()<<" called waitToComplete on "<<id<<" -> can't wait on itself"<<endl;
 		unlock_I;
 		return;
 	}
@@ -111,12 +111,12 @@ void PCB::waitToComplete(){
 		unlock_I;
 		dispatch();
 		lock_I;
-		cout<<PCB::getRunningId()<<" finished waitToComplete on "<<id<<endl;
+		//cout<<PCB::getRunningId()<<" finished waitToComplete on "<<id<<endl;
 		unlock_I;
 		return;
 	}
 
-	cout<<PCB::getRunningId()<<" called waitToComplete on "<<id<<", but it is already terminated"<<endl;
+	//cout<<PCB::getRunningId()<<" called waitToComplete on "<<id<<", but it is already terminated"<<endl;
 
 	unlock_I;
 }

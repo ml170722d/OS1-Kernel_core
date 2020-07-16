@@ -4,10 +4,11 @@ test_100_processes and test_200_processes work, but console can't be valid test 
 to create output file, in command line enter name_of_project.exe > name_of_output file.txt
 output txt file is located in BCC folder of project
 
-
+added test_270_processes output file; everything is correct!
 
 NOTE:
 	to test yourself, just change N value in main.cpp and if you want to check timer, commant or uncomment cout(s)
+	if starting 100 or more processes, there should be as few outputs to console (cout<<...) as possible; something breks console after specific number of lines outputed!
 
 
 

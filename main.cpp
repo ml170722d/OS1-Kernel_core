@@ -12,7 +12,11 @@
 
 #include "consts.h"
 
-const int N = 10;
+/*
+ * n = 270 max?
+ * no more memory?
+ */
+const int N = 270;
 
 void doSomething1() {
 	Kernel::Lock::CS_lock();
@@ -21,7 +25,7 @@ void doSomething1() {
 	int i;
 
 	for (i = 0; i < N; ++i) {
-		p[i] = new PCB(1024, (i % 2) ? 10 : 100, NULL);
+		p[i] = new PCB(1024, (i % 2) ? 50 : 100, NULL);
 		p[i]->start();
 	}
 	Kernel::Lock::CS_unlock();
