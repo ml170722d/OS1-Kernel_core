@@ -1,0 +1,9 @@
+User main starts
+User main ends
+Thread 2: loop1 starts
+Thread 1: loop1 starts
+Thread 2: loop1 ends, dispatch
+Thread 1: loop1 ends, dispatch
+Thread 2: loop2 ends
+Thread 1: loop2 ends
+Happy end!

@@ -15,7 +15,7 @@
  * n = 270 max?
  * no more memory?
  */
-const int N = 100;
+const int N = 5;
 /*
  void doSomething1() {
  Kernel::Lock::CS_lock();
@@ -77,7 +77,7 @@ void waitSomeTime(int n) {
 		}
 	}
 }
-
+/*
 class TestThread: public Thread {
 public:
 	TestThread(StackSize ss, Time ts, int N) :
@@ -115,7 +115,7 @@ void doSomething2() {
 	Thread* t[N];
 
 	for (int i = 0; i < N; i++) {
-		t[i] = new TestThread(1024, (i%2)?100:200, (i%3)?2000:3000);
+		t[i] = new TestThread(1024, (i%2)?50:100, (i%3)?2000:3000);
 		t[i]->start();
 	}
 
@@ -127,6 +127,14 @@ void doSomething2() {
 	cout << "fin on main end = " << TestThread::fin << endl;
 	cout << "Happy end for doSomethig2()!" << endl;
 	Kernel::Lock::CS_unlock();
+
+}
+*/
+extern int syncPrintf(const char *format, ...);
+extern int userMain(int argc, char** argv);
+
+void doSomething3(){
+	userMain(0, NULL);
 }
 
 int main() {
@@ -135,7 +143,9 @@ int main() {
 
 	//doSomething1();
 
-	doSomething2();
+	//doSomething2();
+
+	doSomething3();
 
 	Kernel::restore();
 

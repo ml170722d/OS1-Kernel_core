@@ -40,4 +40,14 @@ const ptr null = 0;
 #define unlock_I asm sti
 #define NULL 0
 
+
+/*
+ * all down is needed for public tests
+ */
+#define lock() asm cli
+#define unlock() asm sti
+
+extern void tick();
+extern int syncPrintf(const char *format, ...);
+
 #endif /* CONSTS_H_ */

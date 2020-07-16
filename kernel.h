@@ -10,6 +10,7 @@
 
 #include "consts.h"
 #include "linkLst.h"
+#include "thread.h"
 
 class PCB;
 

@@ -96,7 +96,10 @@ void interrupt timer(...) {
 		// poziva se samo kada nije zahtevana promena konteksta
 		// tako da se stara rutina poziva
 		// samo kada je stvarno doslo do prekida
-		if(!Kernel::CS_req) asm int 60h;
+		if(!Kernel::CS_req){
+			asm int 60h;
+			tick();
+		}
 }
 
 void Kernel::allocateResources() {

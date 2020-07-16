@@ -1,0 +1,14 @@
+User main starts
+User main ends
+Starting tests...
+Thread 2: loop1 starts
+Thread 1: loop1 starts
+Thread 2: loop1 ends, dispatch
+Thread 1: loop1 ends, dispatch
+Thread 2: loop2 starts
+Thread 2: loop2 ends
+Thread 1: loop2 starts
+Thread 1: loop2 ends
+Test 1 completed!
+Test 2 completed!
+Happy end!
