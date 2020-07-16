@@ -1,0 +1,1 @@
+/* there is no output file because test is endless!!! this test simulate deadlock!!! */
