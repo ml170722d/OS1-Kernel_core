@@ -15,7 +15,7 @@
 
 int PCB::ID=0;
 
-PCB::PCB(): state(PCB::NEW), timeSlice(DEFAULT_TIME_SLICE), id(ID++), size(0), stack(0), sp(0), ss(0), bp(0), myThread(NULL) {
+PCB::PCB(): state(PCB::NEW), timeSlice(DEFAULT_TIME_SLICE), id(ID++), size(0), stack(0), sp(0), ss(0), bp(0), myThread(NULL), wokenBySignal(false) {
 	lock_I;
 
 	Kernel::all_pcb.add(this);
@@ -24,7 +24,7 @@ PCB::PCB(): state(PCB::NEW), timeSlice(DEFAULT_TIME_SLICE), id(ID++), size(0), s
 }
 
 PCB::PCB(StackSize stackSize, Time _timeSlice, Thread* _myThread): state(PCB::NEW), size(stackSize),
-		timeSlice(_timeSlice), myThread(_myThread), id(ID++), sp(0), ss(0), bp(0) {
+		timeSlice(_timeSlice), myThread(_myThread), id(ID++), sp(0), ss(0), bp(0), wokenBySignal(false) {
 		lock_I;
 
 		stack = new unsigned [stackSize];
@@ -73,7 +73,7 @@ void PCB::wrapper(){
 	Kernel::running->myThread->run();
 
 	Kernel::Lock::CS_lock();
-	//cout<<"----------fin: "<<PCB::fin<<", my id: "<<Kernel::running->id<<endl;
+	//cout<<"----------fin"<<" my id: "<<Kernel::running->id<<endl;
 	Kernel::Lock::CS_unlock();
 
 	lock_I;
@@ -111,7 +111,7 @@ void PCB::waitToComplete(){
 	}
 
 	if ((Kernel::running->id == Kernel::idle_thread->getId()) || (this->id == Kernel::idle_thread->getId())){
-		cout<<"can't wait on idle"<<endl;
+		//cout<<"can't wait on idle"<<endl;
 		unlock_I;
 		return;
 	}
@@ -119,6 +119,7 @@ void PCB::waitToComplete(){
 	if (this->state != PCB::TERMINATED){
 		Kernel::running->state = PCB::BLOCKED;
 		this->waitingQueue.add((PCB*)Kernel::running);
+		//cout<<PCB::getRunningId()<<" now waiting on "<<id<<endl;
 		unlock_I;
 		dispatch();
 		lock_I;

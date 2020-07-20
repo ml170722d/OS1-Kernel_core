@@ -42,7 +42,7 @@ protected:
 
 	friend void interrupt timer(...);
 	friend void dispatch();
-	friend void exitThread();
+	friend class KernelSem;
 
 private:
 
@@ -79,6 +79,11 @@ private:
 	 */
 	static _ID ID;
 	static void wrapper();
+
+	/*
+	 * flag for waking up
+	 */
+	boolean wokenBySignal;
 
 };
 
