@@ -11,8 +11,10 @@
 #include "SCHEDULE.h"
 
 #include "linkLst.h"
+#include "kernsem.h"
 
 LinkedList<PCB*> Kernel::all_pcb;
+LinkedList<KernelSem*> Kernel::all_sem;
 PCB* Kernel::main_pcb = NULL;
 volatile boolean Kernel::CS_req = false;
 volatile int Kernel::csCnt = 20;//DEFAULT_TIME_SLICE;
@@ -81,7 +83,6 @@ void interrupt timer(...) {
 				Kernel::csCnt = Kernel::running->timeSlice;
 				Kernel::running->state = PCB::RUNNING;
 
-
 				asm {
 					// restaurira sp
 					mov sp, tsp
@@ -94,15 +95,17 @@ void interrupt timer(...) {
 			}
 		}
 
-		// poziv stare prekidne rutine
-		// koja se nalazila na 08h, a sad je na 60h;
-		// poziva se samo kada nije zahtevana promena konteksta
-		// tako da se stara rutina poziva
-		// samo kada je stvarno doslo do prekida
 		if(!Kernel::CS_req){
-			asm int 60h;
+			oldTimer;
 			tick();
+			Kernel::update();
 		}
+}
+
+void Kernel::update(){
+	for (LinkedList<KernelSem*>::Iterator it = all_sem.begin(); it != all_sem.end(); ++it){
+		(*it)->update();
+	}
 }
 
 void Kernel::allocateResources() {
@@ -165,6 +168,7 @@ void Kernel::Lock::CS_lock(){
 	lock_I;
 	if (owner == null){
 		owner = (PCB*) Kernel::running;
+		//syncPrintf("new owner id: %d\n", owner->getId());
 	}
 	if (owner != Kernel::running){
 		unlock_I;
@@ -189,13 +193,14 @@ void Kernel::Lock::CS_unlock(){
 	if (lockCnt == 0){
 		lockCond = false;
 		owner = null;
+		//syncPrintf("owner == null\n");
 	}
 	unlock_I;
 }
 
 boolean Kernel::Lock::isLocked(){
 	lock_I;
-	//cout<<"lockCont: "<<lockCond<<", lockCnt: "<<lockCnt<<endl;
+	//cout<<"lockCont: "<<lockCond<<", lockCnt: "<<lockCnt<<", owner id: "<<owner->getId()<<endl;
 	unlock_I;
 	return lockCond;
 }
@@ -209,9 +214,7 @@ Kernel::Idle::~Idle(){
 }
 
 void Kernel::Idle::run(){
-	while (1) {
-		//syncPrintf("*");
-	}
+	while (is_active) {}
 }
 
 

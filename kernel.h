@@ -11,8 +11,10 @@
 #include "consts.h"
 #include "linkLst.h"
 #include "thread.h"
+#include "sem.h"
 
 class PCB;
+class KernelSem;
 
 /*
  * new timer routine declaration
@@ -80,10 +82,16 @@ protected:
 	 */
 	static void freeResources();
 
+	/*
+	 * updates all kernel objects that need it
+	 */
+	static void update();
+
 	friend class PCB;
 	friend class Lock;
 	friend void interrupt timer(...);
 	friend class Thread;
+	friend class KernelSem;
 
 	//TODO: delete tmp friends
 	friend void doSomething1();
@@ -116,6 +124,14 @@ private:
 	 */
 	static LinkedList<PCB*> all_pcb;
 
+	/*
+	 * array of semaphores
+	 */
+	static LinkedList<KernelSem*> all_sem;
+
+	/*
+	 * idle thread
+	 */
 	class Idle: public Thread{
 	public:
 		Idle();
