@@ -1,0 +1,73 @@
+Starting system
+Test starts.
+Thread 16 waits for 75 units of time.
+Thread 16 finished: r = 1
+Thread 15 waits for 70 units of time.
+Thread 14 waits for 65 units of time.
+Thread 13 waits for 60 units of time.
+Thread 12 waits for 55 units of time.
+Thread 11 waits for 50 units of time.
+Thread 10 waits for 45 units of time.
+Thread 9 waits for 40 units of time.
+Thread 8 waits for 35 units of time.
+Thread 7 waits for 30 units of time.
+Thread 6 waits for 25 units of time.
+Thread 5 waits for 20 units of time.
+Thread 4 waits for 15 units of time.
+Thread 3 waits for 10 units of time.
+Thread 2 waits for 5 units of time.
+1
+2
+3
+4
+Thread 2 finished: r = 0
+5
+6
+7
+8
+9
+Thread 3 finished: r = 0
+Thread 4 finished: r = 1
+10
+11
+12
+13
+14
+Thread 5 finished: r = 0
+Thread 6 finished: r = 1
+15
+16
+17
+18
+19
+Thread 7 finished: r = 0
+Thread 8 finished: r = 1
+20
+21
+22
+23
+24
+Thread 9 finished: r = 0
+Thread 10 finished: r = 1
+25
+26
+27
+28
+29
+Thread 11 finished: r = 0
+Thread 12 finished: r = 1
+30
+31
+32
+33
+34
+Thread 13 finished: r = 0
+Thread 14 finished: r = 1
+35
+36
+37
+38
+39
+Thread 15 finished: r = 0
+Test ends.
+System shutting down

@@ -1,0 +1,16 @@
+Starting system
+Test starts.
+Thread waits for 10 units of time...
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+Thread finished.
+Test ends.
+System shutting down

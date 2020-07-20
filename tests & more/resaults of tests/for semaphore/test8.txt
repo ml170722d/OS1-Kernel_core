@@ -1,0 +1,9 @@
+Thread 6 in critical section.
+Thread 5 in critical section.
+Thread 4 in critical section.
+Thread 3 in critical section.
+Thread 2 in critical section.
+Starting system
+Test starts.
+Test ends.
+System shutting down
