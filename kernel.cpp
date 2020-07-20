@@ -38,68 +38,72 @@ unsigned tid;
  * new timer routine definition
  */
 void interrupt timer(...) {
-	//cout<<"*"<<endl;
+	//syncPrintf("*\n");
 	if (!Kernel::CS_req) Kernel::csCnt--;
-		if ((Kernel::csCnt <= 0) || (Kernel::CS_req)) {
-			if(!Kernel::Lock::isLocked()){
 
-				//cout<<"context switch ------------"<<endl;
-				Kernel::CS_req=0;
-				asm {
-					// cuva sp
-					mov tsp, sp
-					mov tss, ss
-					mov tbp, bp
-				}
+	//syncPrintf("%d\n",Kernel::CS_req);
+	if(!Kernel::CS_req){
+		//syncPrintf("async timer call\n");
+		//syncPrintf("ptr to old timer: %x", getvect(0x60));
+		asm int 60h;
+		tick();
+		Kernel::update();
+	}
 
-				Kernel::running->sp = tsp;
-				Kernel::running->ss=tss;
-				Kernel::running->bp=tbp;
+	if ((Kernel::csCnt <= 0) || (Kernel::CS_req)) {
+		if(!Kernel::Lock::isLocked()){
 
-				// scheduler
-				//Kernel::running = getNextPCBToExecute();
-
-				//cout<<"idle prt: "<<Kernel::idle_thread<<endl;
-				//cout<<"old running id: "<<Kernel::running->id<<", state: "<<Kernel::running->state<<endl;
-
-				if((Kernel::running->state != PCB::TERMINATED) && (Kernel::running->state != PCB::BLOCKED) && (Kernel::running->id != Kernel::idle_thread->getId())){
-					//cout<<"put"<<endl;
-					Kernel::running->state = PCB::READY;
-					Scheduler::put((PCB*)Kernel::running);
-				}
-				Kernel::running = Scheduler::get();
-
-				if (Kernel::running == 0){
-					Kernel::running = Kernel::idle_thread->myPCB;
-				}
-
-				//cout<<"new running id: "<<Kernel::running->id<<endl;
-
-				tsp = Kernel::running->sp;
-				tss = Kernel::running->ss;
-				tbp = Kernel::running->bp;
-
-				//tid = Kernel::running->id;
-				Kernel::csCnt = Kernel::running->timeSlice;
-				Kernel::running->state = PCB::RUNNING;
-
-				asm {
-					// restaurira sp
-					mov sp, tsp
-					mov ss, tss
-					mov bp, tbp
-				}
+			//cout<<"context switch ------------"<<endl;
+			Kernel::CS_req=0;
+			asm {
+				// cuva sp
+				mov tsp, sp
+				mov tss, ss
+				mov tbp, bp
 			}
-			else{
-				Kernel::CS_req=1;
-			}
-		}
 
-		if(!Kernel::CS_req){
-			oldTimer;
-			tick();
-			Kernel::update();
+			Kernel::running->sp = tsp;
+			Kernel::running->ss=tss;
+			Kernel::running->bp=tbp;
+
+			// scheduler
+			//Kernel::running = getNextPCBToExecute();
+
+			//cout<<"idle prt: "<<Kernel::idle_thread<<endl;
+			//cout<<"old running id: "<<Kernel::running->id<<", state: "<<Kernel::running->state<<endl;
+
+			if((Kernel::running->state != PCB::TERMINATED) && (Kernel::running->state != PCB::BLOCKED) && (Kernel::running->id != Kernel::idle_thread->getId())){
+				//cout<<"put"<<endl;
+				Kernel::running->state = PCB::READY;
+				Scheduler::put((PCB*)Kernel::running);
+			}
+			Kernel::running = Scheduler::get();
+
+			if (Kernel::running == 0){
+				Kernel::running = Kernel::idle_thread->myPCB;
+			}
+
+			//cout<<"new running id: "<<Kernel::running->id<<endl;
+
+			tsp = Kernel::running->sp;
+			tss = Kernel::running->ss;
+			tbp = Kernel::running->bp;
+
+			//tid = Kernel::running->id;
+			Kernel::csCnt = Kernel::running->timeSlice;
+			Kernel::running->state = PCB::RUNNING;
+
+			asm {
+				// restaurira sp
+				mov sp, tsp
+				mov ss, tss
+				mov bp, tbp
+			}
+
+		} else {
+			Kernel::CS_req=1;
 		}
+	}
 }
 
 void Kernel::update(){
@@ -206,7 +210,7 @@ boolean Kernel::Lock::isLocked(){
 }
 
 
-Kernel::Idle::Idle(): Thread(DEFAULT_STACK_SIZE, 0), is_active(true) {}
+Kernel::Idle::Idle(): Thread(DEFAULT_STACK_SIZE, 1), is_active(true) {}
 
 Kernel::Idle::~Idle(){
 	is_active = false;
@@ -222,6 +226,7 @@ void Kernel::Idle::run(){
  * defining dispatch
  */
 void dispatch(){
+	//syncPrintf("disp\n");
 	Kernel::requestCS(); //makes sure it is not interrupted for itself
 	lock_I;
 	//cout<<"disp"<<endl;

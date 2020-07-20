@@ -125,9 +125,12 @@ PCB* KernelSem::unblok() {
 void KernelSem::update(){
 	lock_I;
 	for (LinkedList<WaitNode*>::Iterator it = timedWait.begin(); it != timedWait.end(); ++it){
+		//syncPrintf("sem update; time left: %d\n", (*it)->waitTime);
 		(*it)->waitTime--;
 		if ((*it)->waitTime > 0) break;
 
+
+		//syncPrintf("putting in sch\n");
 		PCB* p = (*it)->data;
 		timedWait.remove(*it);
 		p->state = PCB::READY;
@@ -135,4 +138,5 @@ void KernelSem::update(){
 		Scheduler::put(p);
 	}
 	unlock_I;
+	//syncPrintf("fin updating sem\n");
 }

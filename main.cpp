@@ -26,7 +26,7 @@ int main(int argc, char** argv) {
 
 	int val = userMain(argc, argv);
 
-	syncPrintf("userMain return value: %d\n", val);
+	//syncPrintf("userMain return value: %d\n", val);
 
 	Kernel::restore();
 
