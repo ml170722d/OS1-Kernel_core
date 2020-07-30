@@ -1,16 +1,9 @@
-test_100_processes and test_200_processes can't be tested in console, they must be tested in output file
-test_100_processes and test_200_processes work, but console can't be valid test because there is to much output lines
-
-to create output file, in command line enter name_of_project.exe > name_of_output file.txt
-output txt file is located in BCC folder of project
-
-added test_270_processes output file; everything is correct!
-
-NOTE:
-	to test yourself, just change N value in main.cpp and if you want to check timer, commant or uncomment cout(s)
-	if starting 100 or more processes, there should be as few outputs to console (cout<<...) as possible; something breks console after specific number of lines outputed!
+to create output file from cmd, in command line enter name_of_project.exe > name_of_output_file.txt
+output txt file will be located in BCC folder of project
 
 
 
-NOTE:
-	at this point, core of system is working as it should!!!
+for some unknown reason i can restrict size od stack to max 64KB, if i do so, the whole project doesnt work
+also, for some stupid reason if stack size for pcb is set between 32768 and 32782, the project doesnt work, but for any other number it does...
+running public test 11 fails after running for some time; my theory is that 2 threads get to the same time in cout<<... section and that breaks running program; 
+	1 possible demonstration of this theory is if all wait calls on mutex m send 0 as arg, the program finishes
