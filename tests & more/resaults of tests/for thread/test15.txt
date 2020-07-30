@@ -1,0 +1,5 @@
+/*
+* test fails for unknown reasons
+* when stack size for thread set between 32768 and 32782, program blocks completely, including timer
+* when stack size for thread set between 15 (if less, then there is no space in stack to save sontext (ints in run, pcbs sp,ss & bp)) and 32767 and between 32783 to max valuse od usigned int (-1), program works normaly
+*/
