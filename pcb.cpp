@@ -27,12 +27,18 @@ PCB::PCB(StackSize stackSize, Time _timeSlice, Thread* _myThread): state(PCB::NE
 		timeSlice(_timeSlice), myThread(_myThread), id(ID++), sp(0), ss(0), bp(0), wokenBySignal(false) {
 		lock_I;
 
-		stack = new unsigned [stackSize];
-		stack[stackSize-1] = 0x200;
+		if ((size > MAX_STACK_SIZE) || (stackSize > MAX_STACK_SIZE)){
+			size = MAX_STACK_SIZE;
+		}else{
+			size = stackSize;
+		}
+
+		stack = new Word[size];
+		stack[size-1] = 0x200;
 
 #ifndef BCC_BLOCK_IGNORE
-		stack[stackSize-2] = FP_SEG(PCB::wrapper);
-		stack[stackSize-3] = FP_OFF(PCB::wrapper);
+		stack[size-2] = FP_SEG(PCB::wrapper);
+		stack[size-3] = FP_OFF(PCB::wrapper);
 
 		sp = FP_OFF(stack + size - 12);
 		ss = FP_SEG(stack + size - 12);

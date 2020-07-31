@@ -218,7 +218,9 @@ Kernel::Idle::~Idle(){
 }
 
 void Kernel::Idle::run(){
-	while (is_active) {}
+	while (is_active) {
+		//syncPrintf("*");
+	}
 }
 
 

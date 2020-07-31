@@ -23,12 +23,14 @@ typedef unsigned long int StackSize;
 typedef int _ID;
 typedef unsigned short int boolean;
 typedef short int  ptr;
+typedef unsigned int Word;
 
 /*
  * definition of constanst
  */
 const StackSize DEFAULT_STACK_SIZE = 4096;
 const Time DEFAULT_TIME_SLICE = 2;
+const unsigned long int MAX_STACK_SIZE = 65536; // 64 * 1024;
 const boolean true = 1;
 const boolean false = 0;
 const ptr null = 0;

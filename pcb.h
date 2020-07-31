@@ -61,7 +61,7 @@ private:
 	/*
 	 * stack of process
 	 */
-	unsigned* stack;
+	Word* stack;
 	StackSize size;
 
 	/*
