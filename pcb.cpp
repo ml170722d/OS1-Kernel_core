@@ -27,16 +27,21 @@ PCB::PCB(StackSize stackSize, Time _timeSlice, Thread* _myThread): state(PCB::NE
 		timeSlice(_timeSlice), myThread(_myThread), id(ID++), sp(0), ss(0), bp(0) {
 		lock_I;
 
-		stack = new unsigned [stackSize];
-		stack[stackSize-1] = 0x200;
+
+		if (size > MAX_STACK_SIZE) size = MAX_STACK_SIZE;
+		StackSize realSize = size / sizeof(unsigned);
+
+
+		stack = new unsigned [realSize];
+		stack[realSize - 1] = 0x200;
 
 #ifndef BCC_BLOCK_IGNORE
-		stack[stackSize-2] = FP_SEG(PCB::wrapper);
-		stack[stackSize-3] = FP_OFF(PCB::wrapper);
+		stack[realSize - 2] = FP_SEG(PCB::wrapper);
+		stack[realSize - 3] = FP_OFF(PCB::wrapper);
 
-		sp = FP_OFF(stack + size - 12);
-		ss = FP_SEG(stack + size - 12);
-		bp = FP_OFF(stack + size - 12);
+		sp = FP_OFF(stack + realSize - 12);
+		ss = FP_SEG(stack + realSize - 12);
+		bp = FP_OFF(stack + realSize - 12);
 #endif
 
 		Kernel::all_pcb.add(this);
@@ -116,7 +121,7 @@ void PCB::waitToComplete(){
 		return;
 	}
 
-	if (this->state != PCB::TERMINATED){
+	if ((this->state != PCB::TERMINATED) && (this->state != PCB::NEW)){
 		Kernel::running->state = PCB::BLOCKED;
 		this->waitingQueue.add((PCB*)Kernel::running);
 		unlock_I;
