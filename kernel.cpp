@@ -65,12 +65,17 @@ void interrupt timer(...) {
 					Kernel::running->state = PCB::READY;
 					Scheduler::put((PCB*)Kernel::running);
 				}
+
 				Kernel::running = Scheduler::get();
 
+
+				//cout<<(PCB*)Kernel::running<<endl;
 				if (Kernel::running == 0){
+					//cout<<"running is now idle"<<endl;
 					Kernel::running = Kernel::idle_thread->myPCB;
-					cout<<"I";
+					//cout<<"I";
 				}
+				//cout<<(PCB*)Kernel::running<<endl;
 
 				//cout<<"new running id: "<<Kernel::running->id<<endl;
 
@@ -202,7 +207,7 @@ boolean Kernel::Lock::isLocked(){
 }
 
 
-Kernel::Idle::Idle(): Thread(DEFAULT_STACK_SIZE, 0), is_active(true) {}
+Kernel::Idle::Idle(): Thread(DEFAULT_STACK_SIZE, 1), is_active(true) {}
 
 Kernel::Idle::~Idle(){
 	is_active = false;
@@ -210,9 +215,7 @@ Kernel::Idle::~Idle(){
 }
 
 void Kernel::Idle::run(){
-	while (1) {
-		//syncPrintf("*");
-	}
+	while (is_active) {}
 }
 
 

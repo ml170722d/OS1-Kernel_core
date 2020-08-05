@@ -132,7 +132,6 @@ public:
 		it->next = it->prev = null;
 		size--;
 		//delete it->data;
-		it->data = null;
 		delete it;
 
 	}

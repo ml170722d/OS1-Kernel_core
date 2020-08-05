@@ -6,33 +6,58 @@
  */
 
 #include "thread.h"
+#include "kernel.h"
 
-class A: public Thread {
+void tick(){
+	cout<<".";
+}
+
+class TestThread : public Thread
+{
+private:
+	TestThread *t;
+
 public:
-	A() :
-			Thread() {
-	}
-	virtual ~A() {
+
+	TestThread(TestThread *thread): Thread(), t(thread){}
+	~TestThread()
+	{
 		waitToComplete();
 	}
 protected:
-	void run() {
-		while (1) {}
-	}
 
-private:
+	void run();
 
 };
 
-int userMain(int argc, char** argv) {
+void TestThread::run()
+{
+	t->waitToComplete();
+}
 
-	A a;
-	a.start();
 
-
+int userMain(int argc, char** argv)
+{
+	syncPrintf("Test starts.\n");
+	TestThread *t1,*t2;
+	t1 = new TestThread(t2);
+	t2 = new TestThread(t1);
+	t1->start();
+	t2->start();
+	delete t1;
+	delete t2;
+	syncPrintf("Test ends.\n");
 	return 0;
 }
 
-void tick() {
-	cout<<".";
-}
+/*
+ * test	|	resault
+ * -----------------
+ * 1	|	success
+ * 2	|	success
+ * 3	|	success
+ * 4	|	success
+ * 5	|	success
+ * 6	|	success
+ * 15	|	success
+ */

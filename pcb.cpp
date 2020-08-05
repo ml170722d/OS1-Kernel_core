@@ -122,6 +122,7 @@ void PCB::waitToComplete(){
 	}
 
 	if ((this->state != PCB::TERMINATED) && (this->state != PCB::NEW)){
+		//cout<<"wait"<<endl;
 		Kernel::running->state = PCB::BLOCKED;
 		this->waitingQueue.add((PCB*)Kernel::running);
 		unlock_I;
