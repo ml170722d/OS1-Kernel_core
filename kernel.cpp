@@ -69,6 +69,7 @@ void interrupt timer(...) {
 
 				if (Kernel::running == 0){
 					Kernel::running = Kernel::idle_thread->myPCB;
+					cout<<"I";
 				}
 
 				//cout<<"new running id: "<<Kernel::running->id<<endl;

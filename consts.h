@@ -28,7 +28,10 @@ typedef short int  ptr;
  * definition of constanst
  */
 const StackSize DEFAULT_STACK_SIZE = 4096;
+const StackSize defaultStackSize = 4096;
+const StackSize MAX_STACK_SIZE = 65536; //64KB
 const Time DEFAULT_TIME_SLICE = 2;
+const Time defaultTimeSlice = 2;
 const boolean true = 1;
 const boolean false = 0;
 const ptr null = 0;

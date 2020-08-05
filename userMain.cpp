@@ -9,40 +9,30 @@
 
 class A: public Thread {
 public:
-	A(char c) :
-			Thread(), znak(c) {
+	A() :
+			Thread() {
 	}
 	virtual ~A() {
 		waitToComplete();
 	}
 protected:
 	void run() {
-		for (int i = 0; i < 1000; i++) {
-			for (int j = 0; j < 30000; j++) {
-				for (int k = 0; k < 30000; k++) {
-
-				}
-			}
-			cout << i << " " << znak << endl;
-		}
+		while (1) {}
 	}
 
 private:
-	char znak;
+
 };
 
 int userMain(int argc, char** argv) {
 
-	A a('a');
+	A a;
 	a.start();
-	A b('b');
-	b.start();
-	A c('c');
-	c.start();
+
 
 	return 0;
 }
 
 void tick() {
-
+	cout<<".";
 }

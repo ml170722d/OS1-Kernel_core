@@ -67,7 +67,7 @@ const int N = 5;
  Kernel::Lock::CS_unlock();
  }
  */
-
+/*
 void waitSomeTime(int n) {
 	for (int i = 0; i < n; i++) {
 		for (int j = 0; j < n; j++) {
@@ -77,6 +77,7 @@ void waitSomeTime(int n) {
 		}
 	}
 }
+*/
 /*
 class TestThread: public Thread {
 public:
@@ -130,7 +131,7 @@ void doSomething2() {
 
 }
 */
-
+/*
 class A: public Thread{
 public:
 	A():Thread(){}
@@ -143,9 +144,6 @@ protected:
 	}
 };
 
-extern int syncPrintf(const char *format, ...);
-extern int userMain(int argc, char** argv);
-
 void f(){
 
 }
@@ -153,6 +151,10 @@ void f(){
 void doSomething3(){
 	userMain(0, NULL);
 }
+*/
+
+extern int syncPrintf(const char *format, ...);
+extern int userMain(int argc, char** argv);
 
 int main(int argc, char** argv) {
 
