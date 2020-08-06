@@ -17,7 +17,7 @@ class LinkedList {
 public:
 
 	LinkedList() :
-			size(0), head(null), tail(null) {
+		size(0), head(null), tail(null) {
 	}
 	~LinkedList() {
 		clear();
@@ -31,10 +31,10 @@ public:
 	class LinkedListNode {
 	public:
 		LinkedListNode(T d) :
-				data(d), next(null), prev(null) {
+			data(d), next(null), prev(null) {
 		}
 		T data;
-		LinkedListNode *next, *prev;
+		LinkedListNode* next, * prev;
 	};
 
 	/*
@@ -46,7 +46,7 @@ public:
 	class Iterator {
 	public:
 		Iterator(LinkedListNode* e = NULL) :
-				elem(e) {
+			elem(e) {
 		}
 
 		T& operator*() {
@@ -71,7 +71,7 @@ public:
 		}
 
 	protected:
-		friend class LinkedList<T> ;
+		friend class LinkedList<T>;
 	private:
 		LinkedListNode* elem;
 	};
@@ -103,6 +103,9 @@ public:
 
 	void clear();
 	void add(const T& e);
+	void push_back(const T& e) {
+		add(e);
+	}
 
 	void remove(const T& e) {
 		LinkedListNode* it;
@@ -113,14 +116,14 @@ public:
 			}
 		}
 
-		if (it == head){
+		if (it == head) {
 			head = head->next;
 		}
-		if (it == tail){
+		if (it == tail) {
 			tail = tail->prev;
 		}
 
-		LinkedListNode *next = it->next, *prev = it->prev;
+		LinkedListNode* next = it->next, * prev = it->prev;
 
 		if (prev != null) {
 			prev->next = next;
@@ -136,19 +139,62 @@ public:
 
 	}
 
+	void insert_before(Iterator position, const T& e) {
+		LinkedListNode* cur = position.elem;
+		LinkedListNode* prev = cur->prev;
+
+		LinkedListNode* _new = new LinkedListNode(e);
+
+		_new->next = cur;
+		_new->prev = prev;
+
+		if (cur != null)
+			cur->prev = _new;
+
+		if (prev != null)
+			prev->next = _new;
+
+		if (head == cur)
+			head = _new;
+
+		size++;
+	}
+
+	void insert_after(Iterator position, const T& e) {
+		LinkedListNode* cur = position.elem;
+		LinkedListNode* next = cur->next;
+
+		LinkedListNode* _new = new LinkedListNode(e);
+
+		_new->prev = cur;
+		_new->next = next;
+
+		if (cur != null)
+			cur->next = _new;
+
+		if (next != null)
+			next->prev = _new;
+
+		if (tail == cur)
+			tail = _new;
+
+		size++;
+	}
+
 protected:
 	int size;
 
 private:
-	LinkedListNode *head, *tail;
+	LinkedListNode* head, * tail;
 };
 
 template<class T>
 void LinkedList<T>::add(const T& e) {
-	LinkedListNode *newE = new LinkedListNode(e);
+	LinkedListNode* newE = new LinkedListNode(e);
 	if (isEmpty()) {
 		head = newE;
-	} else {
+	}
+	else {
 		tail->next = newE;
 		newE->prev = tail;
 	}
@@ -169,33 +215,6 @@ void LinkedList<T>::clear() {
 	}
 	head = tail = null;
 }
-
-/*
- template<class T>
- void LinkedList<T>::remove(const T& e) {
- Iterator it;
- for (it = begin(); it != end(); ++it) {
- if (*it == e) {
- break;
- }
- }
-
- Iterator next = Iterator(it.elem->next), prev = Iterator(it.elem->prev);
-
- if (prev.elem != null) {
- prev.elem->next = next.elem;
- }
- if (next.elem != null) {
- next.elem->prev = prev.elem;
- }
-
- it.elem->next = it.elem->prev = null;
- size--;
- delete it.elem;
- it.elem = null;
-
- }
- */
 
 template<class T>
 const T& LinkedList<T>::first() {

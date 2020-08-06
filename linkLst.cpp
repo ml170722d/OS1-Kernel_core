@@ -7,114 +7,6 @@
 
 #include "linkLst.h"
 
-/*
- * problem with linker
- * can identify definitions of functions
- */
-/*
- template<class T>
- LinkedList<T>::LinkedList() :
- size(0), head(null), tail(null) {
- }
-
- template<class T>
- LinkedList<T>::~LinkedList() {
- clear();
- }
- */
-/*
- template<class T>
- void LinkedList<T>::add(const T& e) {
- LinkedListNode *newE = new LinkedListNode(e);
- if (isEmpty()) {
- head = newE;
- } else {
- tail->next = newE;
- newE->prev = tail;
- }
-
- tail = newE;
- size++;
- }
-
- template<class T>
- void LinkedList<T>::clear() {
- LinkedListNode* e = head;
- while (e != null) {
- head = head->next;
- e->next = e->prev = null;
- delete e;
- e = head;
- size--;
- }
- head = tail = null;
- }
-
- template<class T>
- void LinkedList<T>::remove(const T& e) {
- Iterator it;
- for (it = begin(); it != end(); ++it) {
- if (*it == e) {
- break;
- }
- }
-
- Iterator next = Iterator(it.elem->next), prev = Iterator(it.elem->prev);
-
- if (prev.elem != null){
- prev.elem->next = next.elem;
- }
- if (next.elem != null){
- next.elem->prev = prev.elem;
- }
-
- it.elem->next = it.elem->prev = null;
- size--;
- delete it.elem;
- it.elem = null;
-
- }
-
- template<class T>
- const T& LinkedList<T>::first() {
- return head;
- }
-
- template<class T>
- const T& LinkedList<T>::last() {
- return tail;
- }
-
- template<class T>
- Large LinkedList<T>::getSize() {
- return size;
- }
-
- template<class T>
- boolean LinkedList<T>::isEmpty() {
- return (head == null) ? true : false;
- }
-
- template<class T>
- void LinkedList<T>::printList() {
- for (Iterator it = begin(); it != end(); ++it) {
- cout << *it << " ";
- }
- cout << endl;
- }
- */
-/*
- * ERROR: Type qualifier 'Iterator' must be a struct or class name
- * ERROR: Declaration terminated incorrectly
- * NOTE: similar error for any declaration involving inner struct or class
- */
-/*
- template<class T>
- LinkedList<T>::Iterator::Iterator(LinkedList<T>::LinkedListNode* e){
- elem = e;
- }
- */
-
 void test_empty_and_size() {
 	LinkedList<int> numbers;
 
@@ -123,7 +15,7 @@ void test_empty_and_size() {
 	numbers.add(42);
 	numbers.add(13317);
 	cout << "After adding elements, numbers.isEmpty(): " << numbers.isEmpty()
-			<< ", size: " << numbers.getSize() << endl;
+		<< ", size: " << numbers.getSize() << endl;
 
 	/*
 	 * expected output:
@@ -141,14 +33,14 @@ void test_iteration_trough_list() {
 	numbers.add(10);
 	numbers.add(20);
 	cout << "After adding elements, numbers.isEmpty(): " << numbers.isEmpty()
-			<< ", size: " << numbers.getSize() << endl;
+		<< ", size: " << numbers.getSize() << endl;
 
 	numbers.add(30);
 	numbers.add(40);
 	numbers.add(50);
 
 	for (LinkedList<int>::Iterator it = numbers.begin(); it != numbers.end();
-			++it) {
+		++it) {
 		cout << *it << " ";
 	}
 	cout << endl;
@@ -300,6 +192,223 @@ void test_clear() {
 	chars.printList();
 }
 
+class TestClass {
+public:
+	TestClass(char e) {
+		c = new char[sizeof(char) * 1024];
+		cc = e;
+	}
+
+	~TestClass() {
+		delete c;
+	}
+
+	friend ostream& operator<<(ostream& it, const TestClass& t) {
+		it << t.cc;
+		return it;
+	}
+
+	friend ostream& operator<<(ostream& it, const TestClass* t) {
+		it << t->cc;
+		return it;
+	}
+
+	char getC() {
+		return cc;
+	}
+
+private:
+	char cc;
+	char* c;
+};
+
+void test_basic() {
+	TestClass t('a');
+	TestClass* tt;
+	TestClass* ttt;
+
+	tt = new TestClass('b');
+	ttt = new TestClass('c');
+
+
+	cout << t << endl << *tt << endl << *ttt << endl;
+
+	delete tt;
+	delete ttt;
+}
+
+void test_insert_before() {
+	LinkedList<TestClass*>* t = new LinkedList<TestClass*>();
+
+	TestClass* a[20];
+
+	for (int i = 0; i < 20; i++) {
+		a[i] = new TestClass(i + 65);
+		t->push_back(a[i]);
+	}
+
+	t->printList();
+
+	TestClass* q = new TestClass('1'),
+		* w = new TestClass('2'),
+		* e = new TestClass('3'),
+		* r = new TestClass('4'),
+		* b = new TestClass('x'),
+		* y = new TestClass('n'),
+		* u = new TestClass('|'),
+		* i2 = new TestClass('~');
+
+	for (LinkedList<TestClass*>::Iterator it = t->begin(); it != t->end(); ++it) {
+		switch ((*it)->getC())
+		{
+		case 'A':
+			t->insert_before(it, q);
+			t->printList();
+			break;
+		case 'D':
+			t->insert_before(it, b);
+			t->printList();
+			break;
+		case 'H':
+			t->insert_before(it, u);
+			t->printList();
+			break;
+		case 'C':
+			t->insert_before(it, i2);
+			t->printList();
+			break;
+		case 'x':
+			t->insert_before(it, w);
+			t->printList();
+			break;
+		case 'n':
+			t->insert_before(it, e);
+			t->printList();
+			break;
+		case 'T':
+			t->insert_before(it, r);
+			t->printList();
+			t->insert_before(it, y);
+			t->printList();
+			break;
+		default:
+			break;
+		}
+	}
+
+	t->printList();
+
+	for (int ii = 0; ii < 20; ii++)
+	{
+		t->remove(a[ii]);
+		delete a[ii];
+	}
+
+	t->clear();
+	cout<<": ";
+	t->printList();
+
+	delete q;
+	delete w;
+	delete e;
+	delete r;
+	delete b;
+	delete y;
+	delete u;
+	delete i2;
+
+	t->printList();
+
+	delete t;
+}
+
+void test_insert_after() {
+	LinkedList<TestClass*>* t = new LinkedList<TestClass*>();
+
+	TestClass* a[20];
+
+	for (int i = 0; i < 20; i++) {
+		a[i] = new TestClass(i + 65);
+		t->push_back(a[i]);
+	}
+
+	t->printList();
+
+	TestClass* q = new TestClass('1'),
+		* w = new TestClass('2'),
+		* e = new TestClass('3'),
+		* r = new TestClass('4'),
+		* b = new TestClass('x'),
+		* y = new TestClass('n'),
+		* u = new TestClass('|'),
+		* i3 = new TestClass('~');
+
+	for (LinkedList<TestClass*>::Iterator it = t->begin(); it != t->end(); ++it) {
+		switch ((*it)->getC())
+		{
+		case 'A':
+			t->insert_after(it, q);
+			t->printList();
+			break;
+		case 'D':
+			t->insert_after(it, b);
+			t->printList();
+			break;
+		case 'H':
+			t->insert_after(it, u);
+			t->printList();
+			break;
+		case 'C':
+			t->insert_after(it, i3);
+			t->printList();
+			break;
+		case 'x':
+			t->insert_after(it, w);
+			t->printList();
+			break;
+		case 'n':
+			t->insert_after(it, e);
+			t->printList();
+			break;
+		case 'T':
+			t->insert_after(it, r);
+			t->printList();
+			t->insert_after(it, y);
+			t->printList();
+			break;
+		default:
+			break;
+		}
+	}
+
+	t->printList();
+
+	for (int ii = 0; ii < 20; ii++)
+	{
+		t->remove(a[ii]);
+		delete a[ii];
+	}
+
+	t->printList();
+
+	t->clear();
+	cout<<": ";
+	t->printList();
+
+	delete q;
+	delete w;
+	delete e;
+	delete r;
+	delete b;
+	delete y;
+	delete u;
+	delete i3;
+
+	t->printList();
+
+	delete t;
+}
+
 void tests_for_linkedList() {
 	cout << "Start" << endl;
 
@@ -321,8 +430,17 @@ void tests_for_linkedList() {
 	test_clear();
 
 	cout << "----------------" << endl;
-	cout<<"test_rm_and_add"<<endl;
+	cout << "test_rm_and_add" << endl;
 	test_rm_and_add();
 
-	cout<<"tests happy end"<<endl;
+	cout << endl;
+	test_basic();
+
+	cout << endl;
+	test_insert_after();
+
+	cout << endl;
+	test_insert_before();
+
+	cout << endl << "tests happy end" << endl;
 }
