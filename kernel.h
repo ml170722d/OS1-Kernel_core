@@ -19,6 +19,8 @@ class PCB;
  */
 void interrupt timer(...);
 
+extern void tick();
+
 class Kernel {
 public:
 	/*
@@ -84,6 +86,7 @@ protected:
 	friend class Lock;
 	friend void interrupt timer(...);
 	friend class Thread;
+	friend void tick();
 
 	//TODO: delete tmp friends
 	friend void doSomething1();
@@ -122,6 +125,7 @@ private:
 		~Idle();
 	protected:
 		virtual void run();
+		friend class Kernel;
 	private:
 		boolean is_active;
 	};
