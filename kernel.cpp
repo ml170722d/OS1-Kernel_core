@@ -20,6 +20,19 @@ volatile PCB* Kernel::running = NULL;
 Kernel::Idle* Kernel::idle_thread = NULL;
 
 
+int kern_mutex_glb = 1;
+
+void kern_mutex_glb_wait(){
+ ksloop:asm{
+	mov ax, 0
+	xchg ax, kern_mutex_glb
+}
+ if(_AX ==0){
+	dispatch();
+	asm jmp ksloop;
+ }
+}
+
 
 /*
  * old timer routine declaration
