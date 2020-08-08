@@ -15,7 +15,7 @@
 
 int PCB::ID=0;
 
-PCB::PCB(): state(PCB::NEW), timeSlice(DEFAULT_TIME_SLICE), id(ID++), size(0), stack(0), sp(0), ss(0), bp(0), myThread(NULL) {
+PCB::PCB(): state(PCB::NEW), timeSlice(DEFAULT_TIME_SLICE), id(ID++), size(0), stack(0), sp(0), ss(0), bp(0), myThread(NULL), end_of_wait_time(false) {
 	lock_I;
 
 	Kernel::all_pcb.add(this);
@@ -24,7 +24,7 @@ PCB::PCB(): state(PCB::NEW), timeSlice(DEFAULT_TIME_SLICE), id(ID++), size(0), s
 }
 
 PCB::PCB(StackSize stackSize, Time _timeSlice, Thread* _myThread): state(PCB::NEW), size(stackSize),
-		timeSlice(_timeSlice), myThread(_myThread), id(ID++), sp(0), ss(0), bp(0) {
+		timeSlice(_timeSlice), myThread(_myThread), id(ID++), sp(0), ss(0), bp(0), end_of_wait_time(false) {
 		lock_I;
 
 

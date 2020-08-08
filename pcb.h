@@ -12,6 +12,7 @@
 #include "linkLst.h"
 
 class Thread;
+class KernelSem;
 
 class PCB{
 
@@ -43,6 +44,9 @@ protected:
 	friend void interrupt timer(...);
 	friend void dispatch();
 	friend void exitThread();
+	friend void tick();
+
+	friend class KernelSem;
 
 private:
 
@@ -73,6 +77,11 @@ private:
 	 * queue for all processes waiting on this process to finish
 	 */
 	LinkedList<PCB*> waitingQueue;
+
+	/*
+	 * flag marking if process was woken up by end of wait time
+	 */
+	volatile boolean end_of_wait_time;
 
 	/*
 	 * no one need to know about this except PCB class
