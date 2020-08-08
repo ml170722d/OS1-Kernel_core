@@ -9,10 +9,12 @@
 #include "consts.h"
 #include "pcb.h"
 #include "SCHEDULE.h"
+#include "ker_sem.h"
 
 #include "linkLst.h"
 
 LinkedList<PCB*> Kernel::all_pcb;
+LinkedList<KernelSem*> Kernel::all_sem;
 PCB* Kernel::main_pcb = NULL;
 volatile boolean Kernel::CS_req = false;
 volatile int Kernel::csCnt = 20;//DEFAULT_TIME_SLICE;
@@ -100,7 +102,6 @@ void interrupt timer(...) {
 				Kernel::csCnt = Kernel::running->timeSlice;
 				Kernel::running->state = PCB::RUNNING;
 
-
 				asm {
 					// restaurira sp
 					mov sp, tsp
@@ -121,6 +122,7 @@ void interrupt timer(...) {
 		if(!Kernel::CS_req){
 			asm int 60h;
 			tick();
+			Kernel::update();
 		}
 }
 
@@ -241,4 +243,10 @@ void dispatch(){
 	//cout<<"disp"<<endl;
 	timer();
 	unlock_I
+}
+
+void Kernel::update(){
+	for (LinkedList<KernelSem*>::Iterator it = all_sem.begin(); it != all_sem.end(); it++){
+		(*it)->update();
+	}
 }

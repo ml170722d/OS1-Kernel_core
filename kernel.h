@@ -19,6 +19,7 @@ void kern_mutex_glb_wait();
 #define kIntUnlock kern_mutex_glb = 1;
 
 class PCB;
+class KernelSem;
 
 /*
  * new timer routine declaration
@@ -33,7 +34,7 @@ public:
 	 * class that is meant to allow for nested
 	 * context switch locking
 	 */
-	class Lock{
+	class Lock {
 	public:
 		static void CS_lock();
 		static void CS_unlock();
@@ -91,12 +92,10 @@ protected:
 	friend class PCB;
 	friend class Lock;
 	friend void interrupt timer(...);
-	friend class Thread;
+	//friend class Thread;
 	friend void tick();
 
-	//TODO: delete tmp friends
-	friend void doSomething1();
-	friend void doSomething2();
+	friend class KernelSem;
 
 private:
 
@@ -125,7 +124,12 @@ private:
 	 */
 	static LinkedList<PCB*> all_pcb;
 
-	class Idle: public Thread{
+	/*
+	 * list of all created PCBs
+	 */
+	static LinkedList<KernelSem*> all_sem;
+
+	class Idle: public Thread {
 	public:
 		Idle();
 		~Idle();
@@ -137,6 +141,8 @@ private:
 	};
 
 	static Idle* idle_thread;
+
+	static void update();
 
 };
 
