@@ -9,76 +9,96 @@
 #include "kernel.h"
 #include "consts.h"
 #include "linkLst.h"
+#include  "semaphor.h"
+#include "ker_sem.h"
 
-void tick(){
-	cout<<".";
+Semaphor s(0);
+
+int t = 0;
+void tick() {
+	//cout << t++ << " ";
+	//cout << s.myImpl->value << " ";
 }
 
-class A:public Thread{
+class A: public Thread {
 public:
-	A(char c, Time ts):Thread(defaultStackSize, ts), znak(c){}
-	~A(){
+	A(int nn, Time ts, Semaphor *ss) :
+			Thread(defaultStackSize, ts), n(nn), s(ss) {
+	}
+	~A() {
 		waitToComplete();
 	}
 protected:
-	void run(){
-		for (unsigned long long int i = 0; i < 10000; ++i) {
-			kIntLock
-			cout<<znak;
-			kIntUnlock
-			for (int j = 0; j < 2000; ++j) {
-				for (int k = 0; k < 2000; ++k) {
+	void run() {
+
+		// do something ...
+		for (int i = 0; i < 30000; i++) {
+			for (int j = 0; j < 30000; j++) {
+
+			}
+		}
+
+		//critical section start
+		s->wait(0);
+
+		syncPrintf(
+				"thread %d entered critical section++++++++++++++++++++++++\n",
+				this->getId());
+		for (int N = 0; N < n; N++) {
+			for (int q = 0; q < 30000; ++q) {
+				for (int p = 0; p < 30000; ++p) {
 
 				}
 			}
+			cout << "thread " << this->getId() << " N = " << N << endl;
 		}
+		syncPrintf(
+				"thread %d finished critical section--------------------------\n",
+				this->getId());
+		//critical section end
+		s->signal(0);
+
+		// do something ..
+		for (int a = 0; a < 30000; a++) {
+			for (int b = 0; b < 30000; b++) {
+
+			}
+		}
+
 		kIntLock
-		cout<<endl<<znak<<" over"<<endl;
+		cout << endl << "thread " << this->getId() << " terminating" << endl;
 		kIntUnlock
 	}
 private:
-	char znak;
+	int n;
+	Semaphor* s;
 };
 
-int userMain(int argc, char** argv)
-{
+int userMain(int argc, char** argv) {
 
-	/*cout<<"test start"<<endl;
+	cout << "test start" << endl;
 
-	A *a = new A('a', 4),
-			*b = new A('b', 6),
-			*c = new A('c', 8),
-			*d = new A('d', 10),
-			*e = new A('e', 4),
-			*f = new A('f', 6),
-			*g = new A('g', 8),
-			*h = new A('h', 2);
+	A* a[10];
+	for (int i = 0; i < 10; i++) {
+		a[i] = new A(i * 2, 2, &s);
+		a[i]->start();
+	}
 
-	a->start();
-	b->start();
-	c->start();
-	d->start();
-	e->start();
-	f->start();
-	g->start();
-	h->start();
+	for (int aa = 0; aa < 30000; aa++) {
+		for (int b = 0; b < 30000; b++) {
 
+		}
+	}
+	s.wait(100);
 
-	delete a;
-	delete b;
-	delete c;
-	delete d;
-	delete e;
-	delete f;
-	delete g;
-	delete h;
+	syncPrintf("\nmain signal\n");
+	s.signal(1);
 
-	cout<<"test over"<<endl;*/
+	for (int j = 0; j < 10; j++) {
+		delete a[j];
+	}
 
-	lock_I;
-	tests_for_linkedList();
-	unlock_I;
-
+	cout << "test over" << endl;
 	return 0;
 }
 
