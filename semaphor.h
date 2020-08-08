@@ -15,6 +15,7 @@ class KernelSem;
 class Semaphor {
 public:
 	Semaphor(int init = 1);
+
 	virtual ~Semaphor();
 
 	virtual int wait(Time maxTimeToWait);
@@ -24,6 +25,8 @@ public:
 	int val();
 
 private:
+
+	friend void tick();
 
 	KernelSem* myImpl;
 

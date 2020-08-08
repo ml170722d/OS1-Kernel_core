@@ -17,13 +17,13 @@ Semaphor::~Semaphor() {
 }
 
 int Semaphor::signal(int n) {
-
+	return myImpl->signal(n);
 }
 
 int Semaphor::wait(Time maxWait) {
-
+	return myImpl->wait(maxWait);
 }
 
 int Semaphor::val() {
-
+	return myImpl->val();
 }
