@@ -8,27 +8,36 @@
 #ifndef KER_SEM_H_
 #define KER_SEM_H_
 
-#include  "kernel.h"
 #include "linkLst.h"
 
+class Kernel;
 class PCB;
 
 class KernelSem {
 public:
 
+	/*
+	 * thread safe
+	 */
 	KernelSem(unsigned int initVal);
 
 	virtual ~KernelSem();
 
 	int wait(int maxWait);
 
-	int signal(int n = 0);
+	int signal(int n);
 
 	int val();
 
-	void update();
-
 private:
+
+	friend class Kernel;
+	friend void tick();
+
+	/*
+	 * not thread safe!!!
+	 */
+	void update();
 
 	void blockNonTimed(PCB* p);
 
@@ -40,12 +49,16 @@ private:
 
 	LinkedList<PCB*> not_timed;
 
-	class TimeNode{
+	class TimeNode {
 	public:
 
-		TimeNode(Time t, PCB* p);
+		TimeNode(Time t, PCB* p) :
+			time(t), pcb(p) {
+		}
 
-		~TimeNode();
+		~TimeNode() {
+			pcb = null;
+		}
 
 	private:
 
@@ -58,7 +71,7 @@ private:
 
 	LinkedList<TimeNode*> timed;
 
-	unsigned int value;
+	int value;
 
 };
 
