@@ -8,22 +8,22 @@
 #include "semaphor.h"
 #include "ker_sem.h"
 
-Semaphor::Semaphor(int init) :
+Semaphore::Semaphore(int init) :
 		myImpl(new KernelSem(init)) {
 }
 
-Semaphor::~Semaphor() {
+Semaphore::~Semaphore() {
 	delete myImpl;
 }
 
-int Semaphor::signal(int n) {
+int Semaphore::signal(int n) {
 	return myImpl->signal(n);
 }
 
-int Semaphor::wait(Time maxWait) {
+int Semaphore::wait(Time maxWait) {
 	return myImpl->wait(maxWait);
 }
 
-int Semaphor::val() {
+int Semaphore::val() {
 	return myImpl->val();
 }

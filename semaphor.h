@@ -12,11 +12,11 @@
 
 class KernelSem;
 
-class Semaphor {
+class Semaphore {
 public:
-	Semaphor(int init = 1);
+	Semaphore(int init = 1);
 
-	virtual ~Semaphor();
+	virtual ~Semaphore();
 
 	virtual int wait(Time maxTimeToWait);
 
