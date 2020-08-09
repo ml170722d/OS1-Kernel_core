@@ -25,7 +25,7 @@ public:
 
 	int wait(int maxWait);
 
-	int signal(int n);
+	int signal(int n = 0);
 
 	int val();
 

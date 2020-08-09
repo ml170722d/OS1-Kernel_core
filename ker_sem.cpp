@@ -64,7 +64,7 @@ void KernelSem::blockTmed(Time t, PCB* p) {
 int KernelSem::wait(int maxWait) {
 	lock_I;
 
-	//cout<<"sem value = "<<value<<" ";
+	//cout<<"call wait : sem value = "<<value<<endl;
 
 	if (value > 0) {
 		value--;
@@ -72,7 +72,7 @@ int KernelSem::wait(int maxWait) {
 		return 1; //success in taking semaphore
 	}
 
-
+	//cout<<"blocked"<<endl;
 	value--;
 	//semaphore taken; need to block running process on this semaphore and dispatch
 	if (maxWait == 0) {
@@ -109,7 +109,7 @@ PCB* KernelSem::unblockNonTimed() {
 	LinkedList<PCB*>::Iterator it = not_timed.begin();
 
 
-	if (not_timed.isEmpty() == true)
+	if (it.isNull())
 		return null;//not_timed queue was empty
 
 	PCB* p = *it;
@@ -123,7 +123,7 @@ PCB* KernelSem::unblockNonTimed() {
 PCB* KernelSem::unblockTimed() {
 	LinkedList<TimeNode*>::Iterator it = timed.begin();
 
-	if (timed.isEmpty() == true)
+	if (it.isNull())
 		return null;//timed queue was empty
 
 	TimeNode* tn = *it;//get list node data
@@ -132,7 +132,7 @@ PCB* KernelSem::unblockTimed() {
 	timed.remove(*it);//remove and delete node from list, but not data in node (TimeNode*)
 
 	it = timed.begin();//get new first node
-	if (timed.isEmpty() != false)
+	if (!it.isNull())
 		(*it)->time += tn->time;//add wait time that was left on previous first node to new first node
 	delete tn;//free memory of TimeNode
 
@@ -143,7 +143,7 @@ PCB* KernelSem::unblockTimed() {
 int KernelSem::signal(int n) {
 	lock_I;
 
-	//cout<<"call signal\n";
+	//cout<<"call signal : sem value = "<<value<<endl;
 
 	if (n < 0) {
 		unlock_I;
@@ -151,8 +151,9 @@ int KernelSem::signal(int n) {
 	}
 
 	if (n == 0) {
+		value++;
 		if ((timed.isEmpty() == true) && (not_timed.isEmpty() == true)) {
-			cout<<endl<<"queues are ampty"<<endl;
+			//cout<<endl<<"queues are empty"<<endl;
 			unlock_I;
 			return 0;
 		}
@@ -162,11 +163,11 @@ int KernelSem::signal(int n) {
 			p = unblockTimed();
 			if (p == null) {
 				//double check for safety reasons
+				//cout<<endl<<"queues are empty"<<endl;
 				unlock_I;
 				return 0;
 			}
 		}
-		value++;
 		Scheduler::put(p);
 		unlock_I;
 
@@ -177,7 +178,7 @@ int KernelSem::signal(int n) {
 
 	while (n > 0) {
 		if ((timed.isEmpty() == true) && (not_timed.isEmpty() == true)) {
-			cout<<endl<<"queues empty"<<endl;
+			//cout<<endl<<"queues empty"<<endl;
 			break;
 		}
 
@@ -189,13 +190,15 @@ int KernelSem::signal(int n) {
 		n--;
 	}
 
+	value += n - ret;
+
 	unlock_I;
 	return ret;
 }
 
 
 void KernelSem::update() {
-	lock_I;
+	//lock_I;
 
 	//cout<<"updated sem\n";
 
@@ -203,12 +206,13 @@ void KernelSem::update() {
 
 	//timed.printList();
 
-	if (timed.isEmpty() == false) {
-		//cout<<"update node"<<endl;
+	if (!it.isNull()) {
+
 		(*it)->time--;
+		//cout<<"id: "<< (*it)->pcb->getId() <<" time = "<<(*it)->time<<endl;
 
 		while ((*it)->time <= 0) {
-			//cout<<"time to wake up\n";
+			//cout<<"time to wake up " << (*it)->pcb->getId()<<endl;
 			TimeNode* tn = *it;
 			it++;
 			PCB* p = tn->pcb;
@@ -222,12 +226,12 @@ void KernelSem::update() {
 			p->end_of_wait_time = true;
 			value++;
 
-			if (timed.isEmpty() == true)
+			if (it.isNull())
 				break;
 		}
 	}
 
-	unlock_I;
+	//unlock_I;
 }
 
 int KernelSem::val() {
