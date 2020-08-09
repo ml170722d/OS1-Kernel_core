@@ -69,6 +69,12 @@ public:
 			elem = elem->next;
 			return *this;
 		}
+		boolean isNull(){
+			if (elem == NULL){
+				return true;
+			}
+			return false;
+		}
 
 	protected:
 		friend class LinkedList<T>;
