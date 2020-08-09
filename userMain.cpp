@@ -5,102 +5,77 @@
  *      Author: OS1
  */
 
-#include "thread.h"
+#include "semaphor.h"
+
 #include "kernel.h"
-#include "consts.h"
-#include "linkLst.h"
-#include  "semaphor.h"
-#include "ker_sem.h"
+#include <iostream.h>
+#include <stdlib.h>
 
-Semaphor s(0);
+/*
+ 	 Test: Semafori sa spavanjem 4
+*/
 
-int t = 0;
-void tick() {
-	//cout << t++ << " ";
-	//cout << s.myImpl->value << " ";
-}
+int t=-1;
 
-class A: public Thread {
+const int n=15;
+
+Semaphore s(1);
+
+class TestThread : public Thread
+{
+private:
+	Time waitTime;
+
 public:
-	A(int nn, Time ts, Semaphor *ss) :
-			Thread(defaultStackSize, ts), n(nn), s(ss) {
-	}
-	~A() {
+
+	TestThread(Time WT): Thread(), waitTime(WT){}
+	~TestThread()
+	{
 		waitToComplete();
 	}
 protected:
-	void run() {
 
-		// do something ...
-		for (int i = 0; i < 30000; i++) {
-			for (int j = 0; j < 30000; j++) {
+	void run();
 
-			}
-		}
-
-		//critical section start
-		s->wait(0);
-
-		syncPrintf(
-				"thread %d entered critical section++++++++++++++++++++++++\n",
-				this->getId());
-		for (int N = 0; N < n; N++) {
-			for (int q = 0; q < 30000; ++q) {
-				for (int p = 0; p < 30000; ++p) {
-
-				}
-			}
-			cout << "thread " << this->getId() << " N = " << N << endl;
-		}
-		syncPrintf(
-				"thread %d finished critical section--------------------------\n",
-				this->getId());
-		//critical section end
-		s->signal(0);
-
-		// do something ..
-		for (int a = 0; a < 30000; a++) {
-			for (int b = 0; b < 30000; b++) {
-
-			}
-		}
-
-		kIntLock
-		cout << endl << "thread " << this->getId() << " terminating" << endl;
-		kIntUnlock
-	}
-private:
-	int n;
-	Semaphor* s;
 };
 
-int userMain(int argc, char** argv) {
+void TestThread::run()
+{
+	syncPrintf("Thread %d waits for %d units of time.\n",getId(),waitTime);
+	int r = s.wait(waitTime);
+	if(getId()%2)
+		s.signal();
+	syncPrintf("Thread %d finished: r = %d\n", getId(),r);
+}
 
-	cout << "test start" << endl;
+void tick()
+{
+	t++;
+	if(t)
+		syncPrintf("%d\n",t);
+}
 
-	A* a[10];
-	for (int i = 0; i < 10; i++) {
-		a[i] = new A(i * 2, 2, &s);
-		a[i]->start();
+int userMain(int argc, char** argv)
+{
+	syncPrintf("Test starts.\n");
+	TestThread* t[n];
+	int i;
+	for(i=0;i<n;i++)
+	{
+		t[i] = new TestThread(5*(i+1));
+		t[i]->start();
 	}
-
-	for (int aa = 0; aa < 30000; aa++) {
-		for (int b = 0; b < 30000; b++) {
-
-		}
+	for(i=0;i<n;i++)
+	{
+		t[i]->waitToComplete();
 	}
-	s.wait(100);
-
-	syncPrintf("\nmain signal\n");
-	s.signal(1);
-
-	for (int j = 0; j < 10; j++) {
-		delete a[j];
-	}
-
-	cout << "test over" << endl;
+	delete t;
+	syncPrintf("Test ends.\n");
 	return 0;
 }
+
+
+
 
 /*
  * test	|	resault
@@ -112,4 +87,11 @@ int userMain(int argc, char** argv) {
  * 5	|	success
  * 6	|	success
  * 15	|	success
+ * -----------------
+ * 7	|	success
+ * 8	|	success
+ * 9	|	success
+ * 10	|	success
+ * 11	|	success
+ * 12	|	success
  */
