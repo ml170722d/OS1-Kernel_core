@@ -27,7 +27,7 @@ int main(int argc, char** argv) {
 
 	Kernel::restore();
 
-	syncPrintf("System shutting down");
+	syncPrintf("System shutting down\n");
 
 
 	//tests_for_linkedList();
