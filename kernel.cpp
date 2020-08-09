@@ -120,9 +120,10 @@ void interrupt timer(...) {
 		// tako da se stara rutina poziva
 		// samo kada je stvarno doslo do prekida
 		if(!Kernel::CS_req){
-			asm int 60h;
+
 			tick();
 			Kernel::update();
+			asm int 60h;
 		}
 }
 
@@ -246,6 +247,7 @@ void dispatch(){
 }
 
 void Kernel::update(){
+	//cout << "update ";
 	for (LinkedList<KernelSem*>::Iterator it = all_sem.begin(); it != all_sem.end(); it++){
 		(*it)->update();
 	}
