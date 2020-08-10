@@ -23,6 +23,7 @@ typedef unsigned long int StackSize;
 typedef int _ID;
 typedef unsigned short int boolean;
 typedef short int  ptr;
+typedef unsigned char IVTNo;
 
 /*
  * definition of constanst

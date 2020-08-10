@@ -10,6 +10,7 @@
 #include "pcb.h"
 #include "SCHEDULE.h"
 #include "ker_sem.h"
+#include "IVTentry.h"
 
 #include "linkLst.h"
 
@@ -20,7 +21,7 @@ volatile boolean Kernel::CS_req = false;
 volatile int Kernel::csCnt = 20;//DEFAULT_TIME_SLICE;
 volatile PCB* Kernel::running = NULL;
 Kernel::Idle* Kernel::idle_thread = NULL;
-
+IVTentry* Kernel::ivtEntrys[NUMBER_OF_IVT_ENTRIES] = { NULL };
 
 int kern_mutex_glb = 1;
 

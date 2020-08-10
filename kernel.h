@@ -18,8 +18,12 @@ void kern_mutex_glb_wait();
 #define kIntLock kern_mutex_glb_wait();
 #define kIntUnlock kern_mutex_glb = 1;
 
+#define NUMBER_OF_IVT_ENTRIES 256
+
 class PCB;
 class KernelSem;
+class IVTentry;
+class KernEv;
 
 /*
  * new timer routine declaration
@@ -94,8 +98,10 @@ protected:
 	friend void interrupt timer(...);
 	//friend class Thread;
 	friend void tick();
+	friend class IVTentry;
 
 	friend class KernelSem;
+	friend class KernEv;
 
 private:
 
@@ -128,6 +134,11 @@ private:
 	 * list of all created PCBs
 	 */
 	static LinkedList<KernelSem*> all_sem;
+
+	/*
+	 *
+	 */
+	static IVTentry *ivtEntrys[NUMBER_OF_IVT_ENTRIES];
 
 	class Idle: public Thread {
 	public:

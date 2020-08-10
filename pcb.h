@@ -13,6 +13,7 @@
 
 class Thread;
 class KernelSem;
+class KernEv;
 
 class PCB{
 
@@ -47,6 +48,7 @@ protected:
 	friend void tick();
 
 	friend class KernelSem;
+	friend class KernEv;
 
 private:
 
