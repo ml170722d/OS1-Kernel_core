@@ -123,9 +123,11 @@ public:
 		}
 
 		if (it == head) {
+			//cout<<"on head"<<endl;
 			head = head->next;
 		}
 		if (it == tail) {
+			//cout<<"on tail"<<endl;
 			tail = tail->prev;
 		}
 

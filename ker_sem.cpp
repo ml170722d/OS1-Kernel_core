@@ -13,11 +13,11 @@
 #include "SCHEDULE.h"
 
 KernelSem::KernelSem(unsigned int init) : value(init), not_timed(), timed() {
-	//lock_I;
+	lock_I;
 
 	Kernel::all_sem.push_back(this);
 
-	//unlock_I;
+	unlock_I;
 }
 
 KernelSem::~KernelSem() {

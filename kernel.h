@@ -77,7 +77,7 @@ public:
 	 * prints out list of all created pcbs;
 	 * it is thread safe
 	 */
-	static void printAllPCB();
+	static void printAllPCBandSEM();
 
 protected:
 

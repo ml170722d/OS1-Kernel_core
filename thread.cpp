@@ -16,6 +16,7 @@ Thread::Thread(StackSize ss, Time ts): myPCB(new PCB(ss, ts, this)) {
 
 Thread::~Thread() {
 	waitToComplete();
+	delete myPCB;
 }
 
 void Thread::waitToComplete(){

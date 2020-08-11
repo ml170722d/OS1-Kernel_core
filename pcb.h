@@ -49,6 +49,7 @@ protected:
 
 	friend class KernelSem;
 	friend class KernEv;
+	friend class Kernel;
 
 private:
 

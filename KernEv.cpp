@@ -30,7 +30,7 @@ KernEv::~KernEv() {
 
 	Kernel::ivtEntrys[ivtNo]->myEv = NULL;
 
-	cout<<"del ev"<<endl;
+	//cout<<"del ev"<<endl;
 
 	unlock_I;
 }

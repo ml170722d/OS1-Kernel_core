@@ -135,6 +135,7 @@ void Kernel::allocateResources() {
 
 void Kernel::freeResources() {
 	delete Kernel::main_pcb;
+	delete Kernel::idle_thread;
 }
 
 void Kernel::init() {
@@ -172,9 +173,15 @@ PCB* Kernel::getRunning(){
 	return (PCB*)Kernel::running;
 }
 
-void Kernel::printAllPCB(){
+void Kernel::printAllPCBandSEM(){
 	Kernel::Lock::CS_lock();
-	Kernel::all_pcb.printList();
+	for (LinkedList<PCB*>::Iterator it = all_pcb.begin(); it != all_pcb.end(); it++){
+		cout<<(*it)->id<<endl;
+	}
+	cout<<endl;
+	for (LinkedList<KernelSem*>::Iterator itt = all_sem.begin(); itt != all_sem.end(); itt++){
+		cout<<(*itt)<<endl;
+	}
 	Kernel::Lock::CS_unlock();
 }
 /*

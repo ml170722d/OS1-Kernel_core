@@ -116,7 +116,7 @@ void PCB::waitToComplete(){
 	}
 
 	if ((Kernel::running->id == Kernel::idle_thread->getId()) || (this->id == Kernel::idle_thread->getId())){
-		cout<<"can't wait on idle"<<endl;
+		//cout<<"can't wait on idle"<<endl;
 		unlock_I;
 		return;
 	}

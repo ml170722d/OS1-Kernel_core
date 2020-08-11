@@ -10,7 +10,7 @@
 #include "kernel.h"
 #include "KernEv.h"
 
-IVTentry::IVTentry(IVTNo _entry, pInterrupt new_int):entry(_entry), myEv(null) {
+IVTentry::IVTentry(IVTNo _entry, pInterrupt new_int):entry(_entry), myEv(NULL) {
 		lock_I;
 #ifndef BCC_BLOCK_IGNORE
 
@@ -27,7 +27,7 @@ IVTentry::~IVTentry() {
 #ifndef BCC_BLOCK_IGNORE
 	setvect(entry, old_int);
 #endif
-	Kernel::ivtEntrys[entry] = null;
+	Kernel::ivtEntrys[entry] = NULL;
 	unlock_I;
 }
 
@@ -36,7 +36,7 @@ void IVTentry::call_old() {
 }
 
 void IVTentry::signal_ev() {
-	if (myEv != null) {
+	if (myEv != NULL) {
 		myEv->signal();
 	}
 }
