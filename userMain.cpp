@@ -1,10 +1,13 @@
+/*
+commented this file to not have conflict when importing official public test
+
 #include "thread.h"
 #include "semaphor.h"
 #include "event.h"
 
-/*
-	Test: dogadjaji
-*/
+
+	//Test: dogadjaji
+
 
 #include <iostream.h>
 #include <stdlib.h>
@@ -119,9 +122,7 @@ int userMain(int argc, char* argv[]) {
 
 	return 0;
 }
-
-
-
+*/
 
 /*
  * test	|	resault
@@ -141,7 +142,7 @@ int userMain(int argc, char* argv[]) {
  * 11	|	success
  * 12	|	success
  * -----------------
- * 13	|
+ * 13	|	mostly successful
  * -----------------
  * 14	|	success
  */
