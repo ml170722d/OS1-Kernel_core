@@ -12,12 +12,6 @@
 #include "linkLst.h"
 #include "thread.h"
 
-extern int kern_mutex_glb;
-void kern_mutex_glb_wait();
-
-#define kIntLock kern_mutex_glb_wait();
-#define kIntUnlock kern_mutex_glb = 1;
-
 #define NUMBER_OF_IVT_ENTRIES 256
 
 class PCB;
