@@ -35,19 +35,19 @@ int main(int argc, char** argv) {
 
 	//cout<<endl<<endl<<counter<<endl<<endl;
 
-	syncPrintf("Starting system\n");
+	//syncPrintf("Starting system\n");
 
 	Kernel::init();
 
-	userMain(argc, argv);
+	int val = userMain(argc, argv);
 
 	Kernel::restore();
 
-	syncPrintf("System shutting down\n");
+	//syncPrintf("System shutting down\n");
 
 	//cout<<endl<<endl<<counter<<endl<<endl;
 
 	//Kernel::printAllPCBandSEM();
 
-	return 0;
+	return val;
 }

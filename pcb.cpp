@@ -51,7 +51,7 @@ PCB::PCB(StackSize stackSize, Time _timeSlice, Thread* _myThread): state(PCB::NE
 PCB::~PCB(){
 	this->waitToComplete();
 	lock_I;
-	delete stack;
+	delete[] stack;
 	//cout<<"del pcb id: "<<this->id<<endl;
 	Kernel::all_pcb.remove(this);
 	unlock_I;
