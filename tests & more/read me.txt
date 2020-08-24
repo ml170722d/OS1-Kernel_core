@@ -1,2 +1,32 @@
+IMPORTANT:
+	syncPrint.cpp are not the same at "tests & more" and "tests & more\debugging"
+	for debugging use syncPrint.cpp at tests & more\debugging
+	
 Note:
-	last state of system before adding new tests and debuging
+	files required to run test for timer are syncPrint.cpp, consts.h, kIntLock.h and kIntLock.cpp, test_int.cpp and tests.h
+	also before program main in main.cpp paste:
+
+#ifdef MEMORY_LEAK_TEST
+#undef MEMORY_LEAK_TEST
+int counter = 0;
+
+void* operator new(unsigned size) {
+	void* ret = malloc(size);
+	if (ret == 0)
+		exit(1); //Out of mem
+	counter++;
+	return ret;
+}
+
+void operator delete(void* loc) {
+	if (loc != 0) {
+		counter--;
+		free(loc);
+	}
+}
+#endif
+	
+	if memory leak test is needed (like in current state od project)
+		
+	location of test files tests & more\debugging (needed for all)
+	location of test files tests & more\debugging\timer (tests for timer only)

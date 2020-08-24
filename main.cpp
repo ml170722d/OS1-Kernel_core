@@ -5,36 +5,36 @@
  *      Author: OS1
  */
 
-#include <STDLIB.H>
-
 #include "kernel.h"
+#include "tests.h"
+
+#ifdef MEMORY_LEAK_TEST
+int counter = 0;
+
+void* operator new(unsigned size) {
+	void* ret = malloc(size);
+	if (ret == 0)
+		exit(1); //Out of mem
+	counter++;
+	return ret;
+}
+
+void operator delete(void* loc) {
+	if (loc != 0) {
+		counter--;
+		free(loc);
+	}
+}
+#endif
 
 extern int syncPrintf(const char *format, ...);
 extern int userMain(int argc, char** argv);
 
-/*
-int counter = 0;
-
-void* operator new(unsigned size) {
-  void* ret = malloc(size);
-  if(ret==0)
-    exit(1);//Out of mem
-  counter++;
-  return ret;
-}
-
-void operator delete(void* loc) {
-  if(loc != 0){
-    counter--;
-    free(loc);
-  }
-}
-*/
-
 int main(int argc, char** argv) {
 
-	//cout<<endl<<endl<<counter<<endl<<endl;
-
+#ifdef MEMORY_LEAK_TEST
+	syncPrintf("counter at the start: %d\n", counter);
+#endif
 	//syncPrintf("Starting system\n");
 
 	Kernel::init();
@@ -45,9 +45,9 @@ int main(int argc, char** argv) {
 
 	//syncPrintf("System shutting down\n");
 
-	//cout<<endl<<endl<<counter<<endl<<endl;
-
-	//Kernel::printAllPCBandSEM();
+#ifdef MEMORY_LEAK_TEST
+	syncPrintf("counter at the end: %d\n", counter);
+#endif
 
 	return val;
 }
