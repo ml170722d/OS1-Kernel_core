@@ -13,7 +13,6 @@
 #include "IVTentry.h"
 
 #include "linkLst.h"
-#include "kernsem.h"
 
 LinkedList<PCB*> Kernel::all_pcb;
 LinkedList<KernelSem*> Kernel::all_sem;
@@ -180,7 +179,6 @@ void Kernel::Lock::CS_lock(){
 	lock_I;
 	if (owner == null){
 		owner = (PCB*) Kernel::running;
-		//syncPrintf("new owner id: %d\n", owner->getId());
 	}
 	if (owner != Kernel::running){
 		unlock_I;
@@ -205,14 +203,13 @@ void Kernel::Lock::CS_unlock(){
 	if (lockCnt == 0){
 		lockCond = false;
 		owner = null;
-		//syncPrintf("owner == null\n");
 	}
 	unlock_I;
 }
 
 boolean Kernel::Lock::isLocked(){
 	lock_I;
-	//cout<<"lockCont: "<<lockCond<<", lockCnt: "<<lockCnt<<", owner id: "<<owner->getId()<<endl;
+	//cout<<"lockCont: "<<lockCond<<", lockCnt: "<<lockCnt<<endl;
 	unlock_I;
 	return lockCond;
 }
@@ -226,13 +223,7 @@ Kernel::Idle::~Idle(){
 }
 
 void Kernel::Idle::run(){
-<<<<<<< HEAD
 	while (is_active) {}
-=======
-	while (is_active) {
-		//syncPrintf("*");
-	}
->>>>>>> master
 }
 
 
@@ -240,7 +231,6 @@ void Kernel::Idle::run(){
  * defining dispatch
  */
 void dispatch(){
-	//syncPrintf("disp\n");
 	Kernel::requestCS(); //makes sure it is not interrupted for itself
 	lock_I;
 	//cout<<"disp"<<endl;

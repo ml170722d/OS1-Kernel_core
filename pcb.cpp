@@ -78,7 +78,7 @@ void PCB::wrapper(){
 	Kernel::running->myThread->run();
 
 	Kernel::Lock::CS_lock();
-	//cout<<"----------fin"<<" my id: "<<Kernel::running->id<<endl;
+	//cout<<"----------fin: "<<PCB::fin<<", my id: "<<Kernel::running->id<<endl;
 	Kernel::Lock::CS_unlock();
 
 	lock_I;
@@ -125,7 +125,6 @@ void PCB::waitToComplete(){
 		//cout<<"wait"<<endl;
 		Kernel::running->state = PCB::BLOCKED;
 		this->waitingQueue.add((PCB*)Kernel::running);
-		//cout<<PCB::getRunningId()<<" now waiting on "<<id<<endl;
 		unlock_I;
 		dispatch();
 		lock_I;

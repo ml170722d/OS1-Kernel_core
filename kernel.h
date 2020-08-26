@@ -11,7 +11,6 @@
 #include "consts.h"
 #include "linkLst.h"
 #include "thread.h"
-#include "sem.h"
 
 #define NUMBER_OF_IVT_ENTRIES 256
 
@@ -87,11 +86,6 @@ protected:
 	 * it is thread safe
 	 */
 	static void freeResources();
-
-	/*
-	 * updates all kernel objects that need it
-	 */
-	static void update();
 
 	friend class PCB;
 	friend class Lock;

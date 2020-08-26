@@ -85,13 +85,8 @@ public:
 	/*
 	 * functions needed to use linked list
 	 */
-	/*Iterator first() {
-		return Iterator(head);
-	}
-	Iterator last() {
-		return Iterator(tail);
-	}*/
-
+	const T& first();
+	const T& last();
 
 	Iterator begin() {
 		return (size != 0) ? Iterator(head) : Iterator(null);
@@ -100,19 +95,17 @@ public:
 		return (size != 0) ? Iterator(tail->next) : Iterator(null);
 	}
 
-	boolean find(const T& e) {
-		int i = 0;
+	Iterator find(const T& e) {
 		for (Iterator it = begin(); it != end(); ++it) {
 			if (*it == e) {
-				return i;
+				return it;
 			}
-			i++;
 		}
-		return -1;
+		return Iterator(null);
 	}
 
 	boolean isEmpty();
-	const int getSize() const;
+	int getSize();
 
 	void clear();
 	void add(const T& e);
@@ -219,71 +212,6 @@ void LinkedList<T>::add(const T& e) {
 }
 
 template<class T>
-void LinkedList<T>::putOn(const int& index, const T& e) {
-	if (index < 0)
-		return; //Exception
-
-	if (index >= size) {
-		add(e);
-		return;
-	}
-
-	LinkedListNode* ind = head;
-	for (int i = 0; i < index; i++) {
-		ind = ind->next;
-	}
-	LinkedListNode* elem = new LinkedListNode(e);
-
-	if (ind == head) {
-		head = elem;
-	}
-
-	if (ind->prev != null) {
-		LinkedListNode* prev = ind->prev;
-		prev->next = elem;
-		elem->prev = prev;
-	}
-
-	ind->prev = elem;
-	elem->next = ind;
-	size++;
-}
-
-template<class T>
-void LinkedList<T>::remove(const T& e) {
-	LinkedListNode* it;
-	for (it = head; it != tail; it = it->next) {
-		if (it->data == e) {
-			//cout << "found" << endl;
-			break;
-		}
-	}
-
-	if (it == head) {
-		head = head->next;
-	}
-	if (it == tail) {
-		tail = tail->prev;
-	}
-
-	LinkedListNode *next = it->next, *prev = it->prev;
-
-	if (prev != null) {
-		prev->next = next;
-	}
-	if (next != null) {
-		next->prev = prev;
-	}
-
-	it->next = it->prev = null;
-	size--;
-	//delete it->data;
-	it->data = null;
-	delete it;
-
-}
-
-template<class T>
 void LinkedList<T>::clear() {
 	LinkedListNode* e = head;
 	while (e != null) {
@@ -297,7 +225,17 @@ void LinkedList<T>::clear() {
 }
 
 template<class T>
-const int LinkedList<T>::getSize() const{
+const T& LinkedList<T>::first() {
+	return head->data;
+}
+
+template<class T>
+const T& LinkedList<T>::last() {
+	return tail->data;
+}
+
+template<class T>
+int LinkedList<T>::getSize() {
 	return size;
 }
 

@@ -1,9 +1,0 @@
-to create output file from cmd, in command line enter name_of_project.exe > name_of_output_file.txt
-output txt file will be located in BCC folder of project
-
-
-
-for some unknown reason i can restrict size od stack to max 64KB, if i do so, the whole project doesnt work
-also, for some stupid reason if stack size for pcb is set between 32768 and 32782, the project doesnt work, but for any other number it does...
-running public test 11 fails after running for some time; my theory is that 2 threads get to the same time in cout<<... section and that breaks running program; 
-	1 possible demonstration of this theory is if all wait calls on mutex m send 0 as arg, the program finishes
