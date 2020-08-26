@@ -14,6 +14,8 @@
 #include <iostream.h>
 #include <dos.h>
 
+//#define NULL (void*)0
+
 /*
  * definition of custom types
  */
@@ -30,7 +32,7 @@ typedef unsigned char IVTNo;
  */
 const StackSize DEFAULT_STACK_SIZE = 4096;
 const StackSize defaultStackSize = 4096;
-const StackSize MAX_STACK_SIZE = 65536; //64KB
+const StackSize MAX_STACK_SIZE = 65535; //64KB
 const Time DEFAULT_TIME_SLICE = 2;
 const Time defaultTimeSlice = 2;
 const boolean true = 1;

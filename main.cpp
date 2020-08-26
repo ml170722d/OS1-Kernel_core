@@ -6,7 +6,6 @@
  */
 
 #include "kernel.h"
-#include "tests.h"
 
 #ifdef MEMORY_LEAK_TEST
 int counter = 0;

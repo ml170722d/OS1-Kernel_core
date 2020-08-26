@@ -10,6 +10,7 @@
 
 #include "consts.h"
 #include "IVTentry.h"
+#include "thread.h"
 
 class KernEv;
 
@@ -36,6 +37,7 @@ private:
 	void interrupt new_int##num(...){\
 		newEntry##num.signal_ev();\
 		if (flag == 1) newEntry##num.call_old();\
+		dispatch();\
 	}
 
 

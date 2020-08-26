@@ -18,7 +18,7 @@ LinkedList<PCB*> Kernel::all_pcb;
 LinkedList<KernelSem*> Kernel::all_sem;
 PCB* Kernel::main_pcb = NULL;
 volatile boolean Kernel::CS_req = false;
-volatile int Kernel::csCnt = 20;//DEFAULT_TIME_SLICE;
+volatile int Kernel::csCnt = 1;//DEFAULT_TIME_SLICE;
 volatile PCB* Kernel::running = NULL;
 Kernel::Idle* Kernel::idle_thread = NULL;
 IVTentry* Kernel::ivtEntrys[NUMBER_OF_IVT_ENTRIES] = { NULL };
@@ -39,9 +39,17 @@ unsigned tid;
  */
 void interrupt timer(...) {
 	//cout<<"*"<<endl;
-	if (!Kernel::CS_req) Kernel::csCnt--;
-		if ((Kernel::csCnt <= 0) || (Kernel::CS_req)) {
-			if(!Kernel::Lock::isLocked()){
+	if (!Kernel::CS_req) {
+		tick();
+		Kernel::update();
+		asm int 60h;
+
+		Kernel::csCnt--;
+	}
+
+	//timeSlice == 0 -> neograniceno vreme izvrsavanja, menja se samo na blokirajuci poziv ili eksplicitni dispatch
+		if ((Kernel::running->timeSlice != 0 && Kernel::csCnt <= 0) || (Kernel::CS_req)) {
+			//if(!Kernel::Lock::isLocked()){
 
 				//cout<<"context switch ------------"<<endl;
 				Kernel::CS_req=0;
@@ -90,28 +98,18 @@ void interrupt timer(...) {
 				Kernel::running->state = PCB::RUNNING;
 
 				asm {
+					mov ss, tss
 					// restaurira sp
 					mov sp, tsp
-					mov ss, tss
 					mov bp, tbp
 				}
-			}
-			else{
-				Kernel::CS_req=1;
-			}
+			//}
+			//else{
+			//	Kernel::CS_req=1;
+			//}
 		}
 
-		// poziv stare prekidne rutine
-		// koja se nalazila na 08h, a sad je na 60h;
-		// poziva se samo kada nije zahtevana promena konteksta
-		// tako da se stara rutina poziva
-		// samo kada je stvarno doslo do prekida
-		if(!Kernel::CS_req){
 
-			tick();
-			Kernel::update();
-			asm int 60h;
-		}
 }
 
 void Kernel::allocateResources() {

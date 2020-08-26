@@ -24,6 +24,7 @@ IVTentry::IVTentry(IVTNo _entry, pInterrupt new_int):entry(_entry), myEv(NULL) {
 
 IVTentry::~IVTentry() {
 	lock_I;
+	old_int();
 #ifndef BCC_BLOCK_IGNORE
 	setvect(entry, old_int);
 #endif
