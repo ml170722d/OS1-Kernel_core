@@ -103,11 +103,11 @@ void interrupt timer(...) {
 					mov sp, tsp
 					mov bp, tbp
 				}
-			//}
+			}
 			//else{
 			//	Kernel::CS_req=1;
 			//}
-		}
+		//}
 
 
 }
