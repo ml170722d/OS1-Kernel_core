@@ -1,0 +1,9 @@
+Starting system
+Starting test
+5
+4
+3
+2
+1
+Test ends
+System shutting down

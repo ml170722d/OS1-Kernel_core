@@ -1,0 +1,14 @@
+Starting system
+Test starts.
+Thread 4 waits for 30 units of time.
+Thread 3 waits for 10 units of time.
+Thread 2 waits for 15 units of time.
+1
+2
+3
+4
+Thread 3 finished: r = 1
+Test ends.
+Thread 2 finished: r = 1
+Thread 4 finished: r = 1
+System shutting down

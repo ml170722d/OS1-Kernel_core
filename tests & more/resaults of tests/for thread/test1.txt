@@ -4,12 +4,12 @@ User main ends
 Starting tests...
 Thread 3: loop1 starts
 Thread 2: loop1 starts
-Thread 3: loop1 ends, dispatch
-Thread 3: loop2 starts
-Thread 3: loop2 ends
 Thread 2: loop1 ends, dispatch
 Thread 2: loop2 starts
 Thread 2: loop2 ends
 Test 1 completed!
+Thread 3: loop1 ends, dispatch
+Thread 3: loop2 starts
+Thread 3: loop2 ends
 Test 2 completed!
 System shutting down

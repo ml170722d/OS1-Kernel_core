@@ -68,7 +68,7 @@ private:
 	/*
 	 * stack of process
 	 */
-	unsigned* stack;
+	Word* stack;
 	StackSize size;
 
 	/*
@@ -91,6 +91,11 @@ private:
 	 */
 	static _ID ID;
 	static void wrapper();
+
+	/*
+	 * flag for waking up
+	 */
+	boolean wokenBySignal;
 
 };
 
